@@ -97,6 +97,82 @@ a { text-decoration: none; color: inherit; }
 
 /* DISCLAIMER */
 .disclaimer { font-size: 10px; color: var(--text-muted); text-align: center; padding: 8px 24px 0; line-height: 1.6; }
+
+/* ── MISUSE MODAL ── */
+.misuse-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: fadeIn .2s ease;
+}
+.misuse-overlay.show { display: flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.misuse-modal {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 36px 32px 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.25);
+  animation: slideUp .25s ease;
+  text-align: center;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.misuse-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.misuse-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+.misuse-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+.misuse-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 24px;
+  padding: 12px 14px;
+  background: rgba(139,0,0,0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(139,0,0,0.1);
+}
+.misuse-conduct {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #8B0000;
+  margin-bottom: 20px;
+}
+.misuse-btn {
+  width: 100%;
+  background: var(--navy);
+  color: var(--cream);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .2s;
+  letter-spacing: .02em;
+}
+.misuse-btn:hover { background: var(--navy-mid); }
 </style>
 </head>
 <body>
@@ -241,24 +317,86 @@ async function sendMessage(text) {
 }
 
 // Simulated replies for demo when no API key
+// ── MISUSE DETECTION ──
+const MISUSE_PATTERNS = [
+  { words: ['dumb','stupid','idiot','idiot','moron','incompetent','useless','worthless'], type: 'derogatory' },
+  { words: ['hate','despise','loathe','disgust'], type: 'hostile' },
+  { words: ['ugly','fat','gross','disgusting'], type: 'appearance' },
+  { words: ['bitch','bastard','asshole','ass','damn','hell','crap','shit','fuck'], type: 'profanity' },
+  { words: ['racist','sexist','discrimination','harassment'], type: 'discrimination' },
+  { words: ['threat','threaten','kill','hurt','attack'], type: 'threat' },
+];
+
+function checkMisuse(text) {
+  const lower = text.toLowerCase();
+  for (const pattern of MISUSE_PATTERNS) {
+    const matched = pattern.words.find(w => {
+      // Match whole word or as part of compound
+      const re = new RegExp('\\b' + w + '\\b', 'i');
+      return re.test(lower);
+    });
+    if (matched) return pattern.type;
+  }
+  return null;
+}
+
+function appendMisuse(type) {
+  // Remove the flagged message from history so it's not sent
+  history.pop();
+  // Clear the input so they can retype
+  document.getElementById('chat-input').value = '';
+  // Show modal
+  document.getElementById('misuseOverlay').classList.add('show');
+}
+
+function closeMisuseModal() {
+  document.getElementById('misuseOverlay').classList.remove('show');
+  document.getElementById('chat-input').focus();
+}
+
 function simulateReply(userText) {
   const lower = userText.toLowerCase();
-  if (lower.includes('manager') || lower.includes('boss')) {
+  if (lower.includes('confused') || lower.includes('confus')) {
+    return "Confusion is usually a signal that something doesn't have enough context yet. What's the part you're most unclear about — the situation itself, or what you should do next?";
+  }
+  if (lower.includes('frustrated') || lower.includes('frustrat')) {
+    return "Frustration usually means something important to you isn't being honored. What's the thing you feel isn't being seen or taken seriously right now?";
+  }
+  if (lower.includes('anxious') || lower.includes('nervous') || lower.includes('worried') || lower.includes('stress')) {
+    return "That makes sense given what you're navigating. When you sit with the anxiety for a moment — what's the specific thing you're most afraid might happen?";
+  }
+  if (lower.includes('tired') || lower.includes('exhaust') || lower.includes('burnout') || lower.includes('overwhelm')) {
+    return "That kind of tiredness usually means something in the current setup isn't sustainable. Is it the volume of work, or more about what the work actually is?";
+  }
+  if (lower.includes('manager') || lower.includes('boss') || lower.includes('1:1')) {
     return "It sounds like there's some tension there. Before we think about how to approach the conversation — what outcome would you actually want to walk away with from that talk?";
   }
-  if (lower.includes('stuck') || lower.includes('bored') || lower.includes('don\'t know')) {
+  if (lower.includes('stuck') || lower.includes('bored') || lower.includes('plateau')) {
     return "That feeling of being stuck usually means something shifted — either in you or in the role. When did you last feel genuinely energized by what you were working on?";
   }
-  if (lower.includes('feedback') || lower.includes('review')) {
+  if (lower.includes('feedback') || lower.includes('review') || lower.includes('performance')) {
     return "Feedback conversations are tricky because we often go in with the message we want to deliver instead of the outcome we want to create. What do you want this person to actually do differently after the conversation?";
   }
-  if (lower.includes('next step') || lower.includes('career') || lower.includes('grow') || lower.includes('promote')) {
+  if (lower.includes('next step') || lower.includes('career') || lower.includes('grow') || lower.includes('promot')) {
     return "That's worth exploring carefully. When you imagine yourself a year from now in a role that feels right — what does your day-to-day look like, specifically?";
   }
-  if (lower.includes('team') || lower.includes('colleague') || lower.includes('conflict')) {
+  if (lower.includes('team') || lower.includes('colleague') || lower.includes('conflict') || lower.includes('disagree')) {
     return "Workplace dynamics are rarely about just one moment. What's the pattern you've been noticing — not just the most recent thing that happened?";
   }
-  return "That's a real situation. Before I ask you anything about it — how are you feeling about it right now? Sometimes naming that first changes the conversation.";
+  if (lower.includes('quit') || lower.includes('leave') || lower.includes('resign')) {
+    return "That's a significant thing to be sitting with. Is this a feeling that's been building, or did something specific happen recently that brought it to the surface?";
+  }
+  if (lower.includes('recogni') || lower.includes('invisible') || lower.includes('credit')) {
+    return "Feeling unseen is one of the more draining experiences at work. Is this about one specific person not seeing your contribution, or is it more systemic than that?";
+  }
+  const fallbacks = [
+    "Tell me more about what's actually happening — I want to make sure I understand the situation before I ask anything.",
+    "What's the part of this that feels most unresolved for you right now?",
+    "If you had to name the one thing you most need clarity on, what would it be?",
+    "What have you already tried, or considered? I want to build from where you are, not start from scratch.",
+    "That's worth unpacking. What does this situation cost you when it stays unresolved?"
+  ];
+  return fallbacks[userText.length % fallbacks.length];
 }
 
 function appendMsg(role, text) {
@@ -304,5 +442,17 @@ function restartChat() {
   document.getElementById('chat-input').value = '';
 }
 </script>
+
+<!-- MISUSE MODAL -->
+<div class="misuse-overlay" id="misuseOverlay" onclick="closeMisuseModal()">
+  <div class="misuse-modal" onclick="event.stopPropagation()">
+    <span class="misuse-icon">⚠️</span>
+    <div class="misuse-title">This doesn't belong here</div>
+    <p class="misuse-msg">It looks like your message may not align with Synaptic's expected behaviours and Code of Conduct.</p>
+    <div class="misuse-sub">This is a safe space for genuine professional reflection. Language that demeans, disrespects, or attacks others isn't something this tool can engage with.</div>
+    <div class="misuse-conduct">Synaptic Code of Conduct · Respectful Communication</div>
+    <button class="misuse-btn" onclick="closeMisuseModal()">I understand — let me rephrase →</button>
+  </div>
+</div>
 </body>
 </html>
