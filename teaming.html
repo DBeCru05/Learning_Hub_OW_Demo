@@ -5,26 +5,26 @@
 <title>Teaming — Synaptic Learning Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--steel-light:rgba(107,154,184,0.12);--cream:#F5F0E8;--gold:#C9913A;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--shadow-hover:0 12px 40px rgba(0,49,83,0.14);--r:12px;--r-lg:16px}
+:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--steel-light:rgba(107,154,184,0.12);--cream:#F5F0E8;--gold:#C9913A;--green:#1DB87E;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-secondary:#3a5a72;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--shadow-hover:0 12px 40px rgba(0,49,83,0.14);--r:12px;--r-lg:16px}
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}a{text-decoration:none;color:inherit}
-.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .brand{display:flex;align-items:center;gap:10px}.brand-mark{width:30px;height:30px}
 .brand-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--cream)}
 .brand-sub{font-size:8px;color:var(--steel);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
-.back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.4)}
-.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:40px;position:relative;overflow:hidden}
+.back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.4);transition:color .2s}.back-link:hover{color:var(--cream)}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:44px 40px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(107,154,184,0.07)}
 .hero-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);font-weight:900;color:var(--cream);margin-bottom:8px}
 .hero h1 span{color:var(--steel)}.hero-sub{font-size:13px;color:rgba(245,240,232,0.5);max-width:500px;line-height:1.65}
-.main{padding:32px 40px 60px;max-width:1100px;margin:0 auto}
+.main{padding:32px 40px 80px;max-width:1100px;margin:0 auto}
 .section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px}
 .filter-btn{font-size:11px;font-weight:700;padding:6px 15px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
 .filter-btn:hover{border-color:var(--steel);color:var(--navy)}
 .filter-btn.active{background:var(--navy);color:var(--cream);border-color:var(--navy)}
-.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:48px}
 @media(max-width:860px){.act-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.act-grid{grid-template-columns:1fr}}
 .act-card{background:var(--card);border-radius:var(--r-lg);border:1.5px solid var(--border);padding:20px;box-shadow:var(--shadow-sm);transition:all .25s;cursor:pointer}
@@ -44,9 +44,58 @@
 .act-title{font-size:14px;font-weight:800;color:var(--text-primary);margin-bottom:4px;letter-spacing:-.01em}
 .act-desc{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:12px}
 .act-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1.5px solid var(--border)}
-.act-time{font-size:10.5px;color:var(--text-muted)}
-.act-size{font-size:10.5px;color:var(--text-muted)}
-.footer{background:var(--navy);padding:14px 40px;display:flex;justify-content:space-between;margin-top:32px}
+.act-time{font-size:10.5px;color:var(--text-muted)}.act-size{font-size:10.5px;color:var(--text-muted)}
+.act-arrow{font-size:13px;color:var(--steel);opacity:0;transition:opacity .2s}
+.act-card:hover .act-arrow{opacity:1}
+
+/* WORKSHOP SECTION */
+.workshop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:32px}
+@media(max-width:680px){.workshop-grid{grid-template-columns:1fr}}
+.ws-card{background:var(--card);border-radius:var(--r-lg);border:1.5px solid var(--border);padding:22px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.ws-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ws-facilitator::before{background:var(--navy)}
+.ws-ttt::before{background:var(--gold)}
+.ws-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.ws-card:hover .act-arrow{opacity:1}
+.ws-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.ws-facilitator .ws-type-badge{background:rgba(0,49,83,0.08);color:var(--navy)}
+.ws-ttt .ws-type-badge{background:rgba(201,145,58,0.1);color:#7a4a00}
+.ws-icon{font-size:26px;margin-bottom:10px}
+.ws-title{font-size:15px;font-weight:800;color:var(--text-primary);margin-bottom:5px;letter-spacing:-.01em}
+.ws-desc{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:14px}
+.ws-meta{display:flex;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1.5px solid var(--border);align-items:center;justify-content:space-between}
+.ws-meta-item{font-size:10.5px;color:var(--text-muted)}
+
+/* MODAL OVERLAY */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(3px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:20px;max-width:680px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.25);animation:modal-in .25s ease;margin:auto}
+@keyframes modal-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:28px 32px 20px;border-bottom:1.5px solid var(--border)}
+.modal-eyebrow{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--steel);margin-bottom:6px}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:var(--text-primary);margin-bottom:4px}
+.modal-source{font-size:11px;color:var(--text-muted);margin-bottom:12px}
+.modal-tags{display:flex;gap:6px;flex-wrap:wrap}
+.modal-tag{font-size:9.5px;font-weight:600;padding:3px 10px;border-radius:10px;background:rgba(0,49,83,0.06);color:var(--navy);border:1px solid var(--border)}
+.modal-body{padding:28px 32px}
+.modal-section{margin-bottom:24px}
+.modal-section-label{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+.modal-why{font-size:13.5px;color:var(--text-secondary);line-height:1.8;padding-left:16px;border-left:3px solid var(--green)}
+.modal-steps{display:flex;flex-direction:column;gap:10px}
+.modal-step{display:flex;gap:12px;align-items:flex-start}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--text-muted);line-height:1.6}
+.modal-tips{display:flex;flex-direction:column;gap:7px}
+.modal-tip{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+.modal-tip::before{content:'•';color:var(--green);flex-shrink:0;margin-top:1px}
+.modal-source-box{background:rgba(0,49,83,0.04);border-radius:var(--r);padding:12px 16px;font-size:11px;color:var(--text-muted);line-height:1.6;border:1px solid var(--border)}
+.modal-close-row{padding:0 32px 24px;display:flex;justify-content:flex-end}
+.modal-close-btn{background:var(--navy);color:var(--cream);border:none;padding:11px 28px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.modal-close-btn:hover{background:var(--navy-mid)}
+
+.footer{background:var(--navy);padding:14px 40px;display:flex;justify-content:space-between}
 .footer span{font-size:10.5px;color:rgba(245,240,232,0.25)}.footer strong{color:rgba(107,154,184,0.6)}
 </style>
 </head>
@@ -63,8 +112,10 @@
   <h1>Teaming <span>& Collaboration</span></h1>
   <p class="hero-sub">Plug-and-play activities for team meetings, workshops, and retrospectives. Classified by topic and impact so you always find the right one for the moment.</p>
 </div>
+
 <div class="main">
-  <div class="section-label">Filter Activities</div>
+  <!-- QUICK ACTIVITIES -->
+  <div class="section-label">Quick Activities · Plug & Play</div>
   <div class="filters">
     <button class="filter-btn active" onclick="filter('all',this)">All activities</button>
     <button class="filter-btn" onclick="filter('trust',this)">🤝 Trust</button>
@@ -76,44 +127,239 @@
     <button class="filter-btn" onclick="filter('quick',this)">🟢 Quick win</button>
   </div>
   <div class="act-grid" id="actGrid"></div>
+
+  <!-- WORKSHOPS -->
+  <div class="section-label">Full Workshops · Facilitator-Led & TTT</div>
+  <div class="workshop-grid" id="wsGrid"></div>
 </div>
+
+<!-- ACTIVITY GUIDE MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()" id="modalContent"></div>
+</div>
+
 <footer class="footer">
   <span>Synaptic Learning Hub · Teaming · 2026</span>
   <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
 </footer>
+
 <script>
-const ACTIVITIES=[
-  {icon:'🪞',title:'Start, Stop, Continue',desc:'Each person shares one thing the team should start doing, stop doing, and continue. Fast and honest.',topic:'retro',impact:'quick',time:'15 min',size:'Any size'},
-  {icon:'🗺️',title:'Working Styles Map',desc:'Team members place themselves on a 2x2 of communication style vs pace preference. Name the diversity before it becomes friction.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people'},
-  {icon:'🎯',title:'One Word Check-In',desc:'Each person says one word that describes how they\'re showing up today. No explanation required. Creates psychological safety fast.',topic:'energy',impact:'quick',time:'5 min',size:'Any size'},
-  {icon:'⭐',title:'Rose, Thorn, Bud',desc:'Structured reflection: what\'s working (rose), what\'s challenging (thorn), what\'s emerging (bud). Good for sprint retros or project check-ins.',topic:'retro',impact:'med',time:'20 min',size:'Any size'},
-  {icon:'🤝',title:'User Manual of Me',desc:'Each person shares their "user manual" — how they work best, what they need, what drains them. Builds trust and prevents assumptions.',topic:'trust',impact:'high',time:'45 min',size:'3–8 people'},
-  {icon:'💬',title:'Feedback Fishbowl',desc:'Two or three people have a structured feedback conversation while the rest observe. The outer circle shares observations after. Powerful for teams with low feedback culture.',topic:'feedback',impact:'high',time:'40 min',size:'6–15 people'},
-  {icon:'⚡',title:'Two Truths and a Lie',desc:'Classic icebreaker that reveals surprising things about people. Especially effective for cross-cultural or newly formed teams.',topic:'energy',impact:'quick',time:'10 min',size:'Any size'},
-  {icon:'🧩',title:'RACI Clarity Session',desc:'Walk through a shared project using RACI — Responsible, Accountable, Consulted, Informed. Surfaces hidden assumptions about who owns what.',topic:'collab',impact:'high',time:'45 min',size:'4–10 people'},
-  {icon:'🔄',title:'4Ls Retrospective',desc:'Liked, Learned, Lacked, Longed For. A richer retrospective format that captures both the analytical and emotional sides of a team experience.',topic:'retro',impact:'med',time:'25 min',size:'Any size'},
-  {icon:'💡',title:'Hot Takes',desc:'Each person shares their most controversial opinion about how the team works. A facilitator helps defuse and explore. Not for new teams.',topic:'feedback',impact:'high',time:'30 min',size:'4–8 people'},
-  {icon:'🌍',title:'Culture Moments',desc:'Share a moment when cultural differences created friction or learning. Based on the Culture Map framework. Opens conversations that usually stay silent.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people'},
-  {icon:'🎲',title:'Random Pair Conversations',desc:'Random pairs spend 5 minutes answering one meaningful question together before the meeting starts. Breaks cliques, builds cross-functional relationships.',topic:'energy',impact:'quick',time:'10 min',size:'8+ people'},
+const ACTIVITIES = [
+  {icon:'🪞',title:'Start, Stop, Continue',desc:'Each person shares one thing the team should start doing, stop doing, and continue. Fast and honest.',topic:'retro',impact:'quick',time:'15 min',size:'Any size',
+   why:'Simple structure unlocks honest conversations that usually stay private. The three categories prevent vagueness and give everyone equal airtime.',
+   steps:[{title:'Set the context (2 min)',desc:'Explain the three categories. Emphasize there are no wrong answers and this is about the team, not individuals.'},
+          {title:'Individual reflection (5 min)',desc:'Everyone writes silently — one sticky note per category. No discussion yet.'},
+          {title:'Share and cluster (6 min)',desc:'Go around the room, one category at a time. Cluster similar items. Notice patterns without judging.'},
+          {title:'Pick one action (2 min)',desc:'As a team, agree on one thing to START and one thing to STOP. Assign an owner.'}],
+   tips:['Do this at the end of a sprint, project, or quarter — not randomly.','If the team is new, Start/Stop/Continue might surface too much. Use Rose, Thorn, Bud instead.','The facilitator should share their own card first to model vulnerability.'],
+   source:'Agile retrospective practice. Widely used across Scrum and Lean teams.'},
+  {icon:'🗺️',title:'Working Styles Map',desc:'Team members place themselves on a 2x2 of communication style vs pace preference. Name the diversity before it becomes friction.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people',
+   why:'Most team friction comes from style differences that were never named. This activity makes invisible preferences visible and creates language the team can use later.',
+   steps:[{title:'Introduce the axes (5 min)',desc:'X-axis: Direct ↔ Indirect communication. Y-axis: Fast-paced ↔ Deliberate decision-making. No axis is better — they\'re just different.'},
+          {title:'Individual placement (3 min)',desc:'Everyone places themselves on the map silently — where they actually operate, not where they aspire to be.'},
+          {title:'Reveal and discuss (15 min)',desc:'Show the full map. Ask: "What do you notice?" "Where are the gaps?" "Where have you felt friction with someone in a different quadrant?"'},
+          {title:'Create team norms (7 min)',desc:'Based on the map, agree on 2-3 communication norms: "When we disagree, we will..." "Before a big decision, we will..."'}],
+   tips:['This works best after a team has worked together for at least a month.','Encourage people to share the WHY behind their placement — history and context matter.','Revisit the map when a new person joins the team.'],
+   source:'Adapted from DISC and working styles frameworks. Aligned with Erin Meyer\'s Culture Map.'},
+  {icon:'🎯',title:'One Word Check-In',desc:'Each person says one word that describes how they\'re showing up today. No explanation required.',topic:'energy',impact:'quick',time:'5 min',size:'Any size',
+   why:'Creates psychological safety in under 5 minutes. Normalizes that people bring their whole context to work — and that\'s ok.',
+   steps:[{title:'Set the frame (1 min)',desc:'Say: "One word — no explanation needed, no judgment. Just where you\'re at right now."'},
+          {title:'Go around the room (3 min)',desc:'Everyone says their word. Facilitator goes first. If someone says "fine", gently ask "fine good or fine complicated?"'},
+          {title:'Acknowledge (1 min)',desc:'Don\'t analyze or comment. Just say "thank you" and move into the meeting. The point is the naming, not the discussion.'}],
+   tips:['Use this at the start of every team meeting — it becomes a ritual.','Never make it mandatory. "Pass" is always an option.','Over time, the team will get better at being honest. Don\'t rush it.'],
+   source:'Liberating Structures. Check-in rounds for meeting openings.'},
+  {icon:'⭐',title:'Rose, Thorn, Bud',desc:'What\'s working (rose), what\'s challenging (thorn), what\'s emerging (bud). Good for sprint retros or project check-ins.',topic:'retro',impact:'med',time:'20 min',size:'Any size',
+   why:'Richer than Start/Stop/Continue because "Bud" surfaces emerging opportunities before they disappear. Better for teams that need to feel heard before they can think forward.',
+   steps:[{title:'Explain the metaphor (2 min)',desc:'Rose = something positive or working well. Thorn = a challenge or pain point. Bud = something with potential, still emerging.'},
+          {title:'Write individually (5 min)',desc:'One item per category. Silent. No discussion.'},
+          {title:'Share roses first (5 min)',desc:'Start with what\'s working. This sets a constructive tone before the thorns.'},
+          {title:'Thorns and buds (8 min)',desc:'Share challenges, then opportunities. For each bud, ask: "What would need to be true for this to grow?"'}],
+   tips:['Buds are often the most valuable part — don\'t rush past them.','If the team has mostly thorns, something structural is wrong. Surface it.'],
+   source:'Design thinking tradition. Used widely in innovation and education contexts.'},
+  {icon:'🤝',title:'User Manual of Me',desc:'Each person shares how they work best — what they need, what drains them. Builds trust and prevents assumptions.',topic:'trust',impact:'high',time:'45 min',size:'3–8 people',
+   why:'Most team conflict is preventable. This activity eliminates the guessing about how teammates prefer to work, receive feedback, and handle stress.',
+   steps:[{title:'Individual writing (15 min)',desc:'Each person completes a template: My working hours/energy peaks, How I prefer to receive feedback, What I need when stressed, What drains me, What I need to do my best work.'},
+          {title:'Share one by one (25 min)',desc:'Each person presents their "manual" in 3-4 minutes. Others listen — no rebuttals or debates.'},
+          {title:'Q&A (5 min)',desc:'Clarifying questions only. Save the deeper conversation for 1:1s.'}],
+   tips:['The facilitator should go first and model vulnerability.','Keep the template simple — 5-6 questions max.','Store the manuals somewhere the team can reference them.'],
+   source:'Adapted from Adam Bryant\'s Corner Office column and team effectiveness research.'},
+  {icon:'💬',title:'Feedback Fishbowl',desc:'A structured feedback conversation while others observe. The outer circle shares observations after.',topic:'feedback',impact:'high',time:'40 min',size:'6–15 people',
+   why:'Most teams have feedback conversations in private or not at all. The Fishbowl creates a shared learning experience — everyone sees what good feedback looks like in practice.',
+   steps:[{title:'Set up the fishbowl (3 min)',desc:'2-3 people sit in the inner circle. The rest observe. Inner circle has a structured feedback conversation using SBI.'},
+          {title:'Inner circle conversation (15 min)',desc:'Participants give and receive feedback in real time. Facilitator can coach from outside but doesn\'t interrupt.'},
+          {title:'Outer circle observations (10 min)',desc:'Observers share: "What did I notice?" "What worked?" "What would I have done differently?"'},
+          {title:'Debrief (12 min)',desc:'Full group discusses: What made this feedback land? What makes feedback hard to give or receive?'}],
+   tips:['Only use this with teams that have basic psychological safety already.','The debrief is the most valuable part — don\'t cut it short.'],
+   source:'Liberating Structures. Fishbowl conversations for group learning.'},
+  {icon:'⚡',title:'Two Truths and a Lie',desc:'Each person shares two true facts and one fiction. Others guess which is the lie.',topic:'energy',impact:'quick',time:'10 min',size:'Any size',
+   why:'Reveals surprising things about people in a low-stakes, playful way. Especially effective for cross-cultural or newly formed teams.',
+   steps:[{title:'Give people 2 minutes to prepare (2 min)',desc:'Everyone writes their two truths and one lie. Remind them the best lies are believable.'},
+          {title:'Share and guess (7 min)',desc:'One person at a time. Share all three — the group votes on which is the lie. Then reveal.'},
+          {title:'Optional: brief story (1 min)',desc:'After revealing, the person shares a 30-second story about one of the truths. This is where real connection happens.'}],
+   tips:['Works best when people pick truths that are genuinely surprising.','Don\'t use this as the only icebreaker — it\'s fun but surface-level.'],
+   source:'Classic team-building exercise. No single origin.'},
+  {icon:'🧩',title:'RACI Clarity Session',desc:'Walk through a shared project using RACI — surfaces hidden assumptions about who owns what.',topic:'collab',impact:'high',time:'45 min',size:'4–10 people',
+   why:'Most execution problems are actually accountability problems. RACI makes implicit ownership explicit before it becomes a conflict.',
+   steps:[{title:'List the key decisions/workstreams (10 min)',desc:'As a group, identify the 8-12 most important decisions or work areas in the project.'},
+          {title:'Assign RACI for each (25 min)',desc:'For each item: who is Responsible (does the work), Accountable (owns the outcome), Consulted (input needed), Informed (kept in the loop). Discuss disagreements openly.'},
+          {title:'Surface the gaps (10 min)',desc:'Look for: multiple R\'s (conflict waiting to happen), no A (nobody owns it), or too many C\'s (decision by committee).'}],
+   tips:['If two people both think they\'re Accountable for something, that\'s your most important conversation.','Keep it to the most critical workstreams — a 40-row RACI defeats the purpose.'],
+   source:'Project management standard. PMBOK and Scrum literature.'},
+  {icon:'🔄',title:'4Ls Retrospective',desc:'Liked, Learned, Lacked, Longed For. A richer retrospective format.',topic:'retro',impact:'med',time:'25 min',size:'Any size',
+   why:'Captures both the analytical and emotional sides of a team experience. "Longed For" is particularly powerful — it surfaces what people needed but didn\'t get.',
+   steps:[{title:'Explain the 4 categories (2 min)',desc:'Liked: what worked. Learned: what you discovered. Lacked: what was missing. Longed For: what you wished had existed.'},
+          {title:'Individual writing (8 min)',desc:'One item per category minimum.'},
+          {title:'Share and cluster (12 min)',desc:'Go category by category. Cluster similar items.'},
+          {title:'Pick one action (3 min)',desc:'What\'s the one thing from "Lacked" or "Longed For" you can address next sprint?'}],
+   tips:['"Longed For" often reveals systemic issues. Take them seriously.'],
+   source:'Agile retrospective practice. Variant of the 4Ls format from Diana Larsen.'},
+  {icon:'💡',title:'Hot Takes',desc:'Each person shares their most controversial opinion about how the team works. Not for new teams.',topic:'feedback',impact:'high',time:'30 min',size:'4–8 people',
+   why:'Surfaces the real conversations people are having in 1:1s but not in team settings. Productive when done with psychological safety. Explosive when not.',
+   steps:[{title:'Set the ground rules (5 min)',desc:'Hot Takes are about systems and ways of working — not about individual people. Critique the process, not the person.'},
+          {title:'Individual writing (5 min)',desc:'Everyone writes their most honest, controversial opinion about how the team operates.'},
+          {title:'Share and discuss (20 min)',desc:'One person at a time. No defensive reactions — only clarifying questions. The facilitator\'s job is to keep it about the work.'}],
+   tips:['Only use this with teams that have worked together for 6+ months.','If the conversation gets personal, stop and reset to the ground rules.'],
+   source:'Inspired by psychological safety research (Amy Edmondson, Harvard).'},
+  {icon:'🌍',title:'Culture Moments',desc:'Share a moment when cultural differences created friction or learning. Based on the Culture Map framework.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people',
+   why:'Opens conversations about cultural friction that usually stay silent. Especially powerful for cross-border or cross-functional teams.',
+   steps:[{title:'Introduce the Culture Map (5 min)',desc:'Briefly explain that culture shapes how people communicate, give feedback, build trust, and disagree — and that there\'s no right or wrong position.'},
+          {title:'Individual reflection (5 min)',desc:'Think of a moment when a cultural difference (national, generational, functional) created friction or a learning moment.'},
+          {title:'Share stories (15 min)',desc:'2-3 volunteers share. Facilitator asks: "What dimension of the Culture Map was at play?" "What would you do differently now?"'},
+          {title:'Team norms (5 min)',desc:'What\'s one thing we can do differently as a team to bridge our cultural gaps?'}],
+   tips:['This works best after the team has done the Leading Without Borders session.','Frame stories as learning, not blame.'],
+   source:'Based on Erin Meyer\'s Culture Map framework (INSEAD).'},
+  {icon:'🎲',title:'Random Pair Conversations',desc:'Random pairs spend 5 minutes on one meaningful question before the meeting starts.',topic:'energy',impact:'quick',time:'10 min',size:'8+ people',
+   why:'Breaks cliques, builds cross-functional relationships, and warms up the conversation before the "real" meeting starts.',
+   steps:[{title:'Assign random pairs (1 min)',desc:'Use a random number generator or have people count off. Truly random — don\'t let people self-select.'},
+          {title:'Give the question (1 min)',desc:'Pick one meaningful question: "What\'s something you\'re working on that excites you?" or "What\'s one thing you wish the rest of the team knew about your work?"'},
+          {title:'Pair conversations (5 min)',desc:'Pairs have their conversation. Facilitator keeps time.'},
+          {title:'Optional: one share-out (3 min)',desc:'Ask 2-3 people: "What did you learn about your partner that surprised you?"'}],
+   tips:['Rotate pairs regularly — don\'t use the same pairs twice in a row.','The question matters a lot. Make it meaningful, not trivial.'],
+   source:'Liberating Structures. Impromptu Networking format.'},
 ];
-function filter(f,btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+
+const WORKSHOPS = [
+  {type:'facilitator',icon:'🤝',title:'Team Charter',desc:'Build the shared agreements that govern how your team works — before problems force the conversation.',time:'60–90 min',size:'Any team',level:'New or reset',depth:'Deep',source:'Google re:Work, Lencioni P. (2002). The Five Dysfunctions of a Team.',
+   why:'Most teams start working before they agree on how to work. The result is implicit norms — some good, some dysfunctional — that are hard to change once established. A team charter surfaces those assumptions early and creates shared ownership over how the team operates.',
+   steps:[{title:'Why are we here? (15 min)',desc:'What is this team\'s purpose? What would be different if this team didn\'t exist? Write a 2-sentence team mission together.'},
+          {title:'How will we work? (20 min)',desc:'Discuss and agree: How do we make decisions? How do we handle disagreement? How do we communicate? What\'s our meeting cadence?'},
+          {title:'What do we need from each other? (15 min)',desc:'Each person shares: what do I need from this team to do my best work? What can I commit to in return?'},
+          {title:'What will we do when things go wrong? (10 min)',desc:'Agree on a repair protocol: how will we address it when norms are broken? Who can call it out, and how?'},
+          {title:'Document and revisit (10 min)',desc:'Write it up. Put it somewhere visible. Agree to revisit it in 90 days.'}],
+   tips:['This is more powerful as a conversation than as a document. The document just captures the conversation.','New leaders inheriting a team: run this in your first 30 days.','Virtual teams: pay extra attention to async communication norms — these are the source of most remote friction.']},
+  {type:'facilitator',icon:'🧠',title:'Psychological Safety Audit',desc:'Diagnose your team\'s safety level and build a concrete plan to improve it.',time:'90 min',size:'4–12 people',level:'Established teams',depth:'Deep',source:'Amy Edmondson (1999). Psychological Safety and Learning Behavior in Work Teams. Harvard.',
+   why:'Teams with high psychological safety learn faster, make fewer errors, and perform better. But most teams don\'t know where they actually stand — or what\'s blocking safety. This workshop makes it measurable and actionable.',
+   steps:[{title:'Measure where you are (20 min)',desc:'Team completes Edmondson\'s 7-item psychological safety scale anonymously. Results displayed live.'},
+          {title:'Interpret the data (15 min)',desc:'Facilitator guides the team through the results without attributing responses. What patterns do you see? What surprises you?'},
+          {title:'Root cause exploration (25 min)',desc:'Using 1-2-4-All: what behaviors, norms, or structures are reducing safety? What are we afraid will happen if we speak up?'},
+          {title:'Build the plan (30 min)',desc:'For each identified blocker, agree on a specific change. Who will do what differently? How will we know it\'s working?'}],
+   tips:['The facilitator must not be the team\'s direct manager.','Results are most useful when anonymized — don\'t try to identify who said what.','Safety is built in small moments, not big declarations. Focus the plan on daily behaviors.']},
+  {type:'ttt',icon:'📋',title:'Feedback Culture TTT',desc:'Train-the-Trainer: equip your team leads to run feedback conversations using SBI and structured frameworks.',time:'2 hours',size:'Up to 12 managers',level:'Managers & Leads',depth:'Skill-building',source:'Synaptic L&D. Based on SBI (Situation-Behavior-Impact) framework, CCL.',
+   why:'Feedback culture doesn\'t scale through L&D alone — it needs to live in the line. This TTT equips managers to run feedback conversations and model the behaviors that build a feedback-rich team.',
+   steps:[{title:'The case for feedback culture (15 min)',desc:'Why feedback is a skill, not a personality trait. What research says about frequency, specificity, and timing.'},
+          {title:'SBI in practice (30 min)',desc:'Participants practice giving feedback using SBI in triads — one giver, one receiver, one observer. Rotate roles.'},
+          {title:'Hard scenarios (30 min)',desc:'Work through the three hardest feedback situations: underperformance, peer feedback upward, feedback after conflict.'},
+          {title:'Building the habit (20 min)',desc:'How to create regular feedback rhythms with your team: monthly check-ins, post-project reviews, real-time micro-feedback.'},
+          {title:'Certification & commitment (25 min)',desc:'Each participant commits to running one feedback conversation using SBI within the next two weeks. L&D follow-up at 30 days.'}],
+   tips:['This TTT should be followed by 1:1 coaching with L&D for the first 30 days.','Pair managers who went through the same training — peer accountability is the strongest predictor of behavior change.','Measure: track the frequency of structured feedback conversations before and after.']},
+  {type:'ttt',icon:'🗺️',title:'Culture Map Facilitation TTT',desc:'Train your team leads to facilitate the Leading Without Borders session with their own teams.',time:'3 hours',size:'Up to 8 facilitators',level:'Senior Leads & Managers',depth:'Certification',source:'Synaptic L&D · Based on Erin Meyer\'s Culture Map (INSEAD).',
+   why:'The Culture Map session is too important to run only once. This TTT certifies internal facilitators to run it with their own cross-cultural teams — creating a multiplier effect that L&D alone can\'t achieve.',
+   steps:[{title:'Content mastery check (30 min)',desc:'Facilitators demonstrate understanding of all 8 Culture Map dimensions. Q&A and corrections.'},
+          {title:'Facilitation techniques (45 min)',desc:'How to manage the pulse check, run the breakout groups, handle the Gemini prompts, and debrief the friction sentences.'},
+          {title:'Practice run (60 min)',desc:'Each facilitator runs one module from the session in front of peers. Observers give structured feedback.'},
+          {title:'Edge cases & difficult moments (30 min)',desc:'What to do when the room gets defensive. How to handle cultural stereotyping that surfaces. How to end on action, not just awareness.'},
+          {title:'Certification debrief (15 min)',desc:'L&D signs off on certification. Each facilitator commits to a run date within 60 days.'}],
+   tips:['Only certify facilitators who have attended the session as participants first.','Provide a co-facilitation opportunity before solo runs.','Check in at 60 days: did they run it? What happened? What do they need?']},
+];
+
+function filter(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.act-card').forEach(c=>{
+  document.querySelectorAll('.act-card').forEach(c => {
     if(f==='all') c.classList.remove('hidden');
-    else if(f==='high'||f==='med'||f==='quick') c.classList.toggle('hidden',c.dataset.impact!==f);
-    else c.classList.toggle('hidden',c.dataset.topic!==f);
+    else if(['high','med','quick'].includes(f)) c.classList.toggle('hidden', c.dataset.impact !== f);
+    else c.classList.toggle('hidden', c.dataset.topic !== f);
   });
 }
-const grid=document.getElementById('actGrid');
-ACTIVITIES.forEach(a=>{
-  const impactBadge=a.impact==='high'?`<span class="act-badge badge-impact-high">🔴 High impact</span>`:a.impact==='med'?`<span class="act-badge badge-impact-med">🟡 Medium</span>`:`<span class="act-badge badge-impact-quick">🟢 Quick win</span>`;
-  const topicBadge=`<span class="act-badge badge-topic-${a.topic}">${{trust:'🤝 Trust',feedback:'💬 Feedback',energy:'⚡ Energy',retro:'🔄 Retro',collab:'🧩 Collab'}[a.topic]}</span>`;
-  const card=document.createElement('div');
-  card.className='act-card'; card.dataset.topic=a.topic; card.dataset.impact=a.impact;
-  card.innerHTML=`<div class="act-icon">${a.icon}</div><div class="act-badges">${topicBadge}${impactBadge}</div><div class="act-title">${a.title}</div><div class="act-desc">${a.desc}</div><div class="act-footer"><span class="act-time">⏱ ${a.time}</span><span class="act-size">👥 ${a.size}</span></div>`;
+
+function openModal(data, isWorkshop) {
+  const stepsHtml = data.steps.map((s,i) => `<div class="modal-step"><div class="step-num">${i+1}</div><div class="step-content"><div class="step-title">${s.title}</div><div class="step-desc">${s.desc}</div></div></div>`).join('');
+  const tipsHtml = data.tips.map(t => `<div class="modal-tip">${t}</div>`).join('');
+
+  let typeBadge = '';
+  if (isWorkshop) {
+    typeBadge = data.type === 'facilitator'
+      ? '<span style="font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(0,49,83,0.08);color:#003153;letter-spacing:.06em;text-transform:uppercase">👤 Facilitator-Led</span>'
+      : '<span style="font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(201,145,58,0.1);color:#7a4a00;letter-spacing:.06em;text-transform:uppercase">🎓 TTT · Train the Trainer</span>';
+  }
+
+  const tags = isWorkshop
+    ? [data.time, data.size, data.level, data.depth].map(t => `<span class="modal-tag">${t}</span>`).join('')
+    : [`⏱ ${data.time}`, `👥 ${data.size}`].map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">Activity Guide ${typeBadge}</div>
+      <div class="modal-title">${data.title}</div>
+      ${data.source ? `<div class="modal-source">${data.source}</div>` : ''}
+      <div class="modal-tags">${tags}</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-label">Why this works</div>
+        <div class="modal-why">${data.why}</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-label">How to run it</div>
+        <div class="modal-steps">${stepsHtml}</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-label">Tips for facilitators</div>
+        <div class="modal-tips">${tipsHtml}</div>
+      </div>
+    </div>
+    <div class="modal-close-row">
+      <button class="modal-close-btn" onclick="closeModal()">Close guide</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Render quick activities
+const grid = document.getElementById('actGrid');
+ACTIVITIES.forEach(a => {
+  const impactBadge = a.impact==='high'
+    ? `<span class="act-badge badge-impact-high">🔴 High impact</span>`
+    : a.impact==='med'
+    ? `<span class="act-badge badge-impact-med">🟡 Medium</span>`
+    : `<span class="act-badge badge-impact-quick">🟢 Quick win</span>`;
+  const topicBadge = `<span class="act-badge badge-topic-${a.topic}">${{trust:'🤝 Trust',feedback:'💬 Feedback',energy:'⚡ Energy',retro:'🔄 Retro',collab:'🧩 Collab'}[a.topic]}</span>`;
+  const card = document.createElement('div');
+  card.className = 'act-card';
+  card.dataset.topic = a.topic;
+  card.dataset.impact = a.impact;
+  card.onclick = () => openModal(a, false);
+  card.innerHTML = `<div class="act-icon">${a.icon}</div><div class="act-badges">${topicBadge}${impactBadge}</div><div class="act-title">${a.title}</div><div class="act-desc">${a.desc}</div><div class="act-footer"><span class="act-time">⏱ ${a.time}</span><span class="act-size">👥 ${a.size}</span><span class="act-arrow">→</span></div>`;
   grid.appendChild(card);
 });
+
+// Render workshops
+const wsGrid = document.getElementById('wsGrid');
+WORKSHOPS.forEach(w => {
+  const card = document.createElement('div');
+  card.className = `ws-card ws-${w.type}`;
+  card.onclick = () => openModal(w, true);
+  const typeLbl = w.type === 'facilitator' ? '👤 Facilitator-Led' : '🎓 Train the Trainer · TTT';
+  card.innerHTML = `<div class="ws-type-badge">${typeLbl}</div><div class="ws-icon">${w.icon}</div><div class="ws-title">${w.title}</div><div class="ws-desc">${w.desc}</div><div class="ws-meta"><span class="ws-meta-item">⏱ ${w.time}</span><span class="ws-meta-item">👥 ${w.size}</span><span class="ws-meta-item">📊 ${w.depth}</span><span class="act-arrow">→</span></div>`;
+  wsGrid.appendChild(card);
+});
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
