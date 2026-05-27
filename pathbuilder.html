@@ -811,31 +811,44 @@ function renderLesson(c){
   }
   return html+`</div>`;
 }
+// Store feedback safely outside HTML attributes
+const _feedbackStore = {};
+
+// Feedback store - avoids inline string escaping issues with apostrophes
+const _fb = {};
+
 function renderQuiz(c,idx){
   const keys=['A','B','C','D'];
+  _fb['qc'+idx]=c.feedbackCorrect;
+  _fb['qw'+idx]=c.feedbackWrong;
   let html=`<div class="quiz-block"><div class="quiz-badge">Knowledge Check</div><div class="quiz-q">${c.question}</div><div class="quiz-opts" id="quizOpts">`;
-  c.options.forEach((opt,i)=>{html+=`<button class="quiz-opt" onclick="handleQuizAnswer(this,${opt.correct},${idx},'${esc(c.feedbackCorrect)}','${esc(c.feedbackWrong)}')"><span class="quiz-key">${keys[i]}</span>${opt.text}</button>`;});
+  c.options.forEach((opt,i)=>{html+=`<button class="quiz-opt" onclick="handleQuizAnswer(this,${opt.correct},${idx})"><span class="quiz-key">${keys[i]}</span>${opt.text}</button>`;});
   return html+`</div><div class="quiz-feedback" id="quizFeedback"></div></div>`;
 }
 function renderScenario(c,idx){
   let html=`<div class="scenario-block"><div class="scenario-scene"><div class="scenario-label">Scenario</div><div class="scenario-text">${c.scene}</div></div><div class="scenario-body"><div class="scenario-q">${c.question}</div><div class="quiz-opts" id="scenOpts">`;
-  c.options.forEach(opt=>{html+=`<button class="quiz-opt" onclick="handleScenAnswer(this,${opt.correct},'${esc(opt.feedback)}',${idx})">${opt.text}</button>`;});
+  c.options.forEach((opt,i)=>{
+    _fb['sf'+idx+'_'+i]=opt.feedback;
+    html+=`<button class="quiz-opt" onclick="handleScenAnswer(this,${opt.correct},${idx},${i})">${opt.text}</button>`;
+  });
   return html+`</div><div class="quiz-feedback" id="scenFeedback"></div></div></div>`;
 }
 
-function handleQuizAnswer(btn,correct,idx,fc,fw){
+function handleQuizAnswer(btn,correct,idx){
   if(answeredQuiz)return; answeredQuiz=true;
   document.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});
   btn.classList.add(correct?'correct':'wrong');
+  const fc=_fb['qc'+idx]||''; const fw=_fb['qw'+idx]||'';
   const fb=document.getElementById('quizFeedback');
   fb.textContent=correct?fc:fw; fb.className='quiz-feedback show '+(correct?'correct':'wrong');
   addXP(correct?100:30); enableNext();
   if(intake.commit==='long') saveProgress();
 }
-function handleScenAnswer(btn,correct,feedback,idx){
+function handleScenAnswer(btn,correct,idx,optIdx){
   if(answeredQuiz)return; answeredQuiz=true;
   document.querySelectorAll('#scenOpts .quiz-opt').forEach(b=>{b.disabled=true;b.onclick=null;});
   btn.classList.add(correct?'correct':'wrong');
+  const feedback=_fb['sf'+idx+'_'+optIdx]||'';
   const fb=document.getElementById('scenFeedback');
   fb.textContent=feedback; fb.className='quiz-feedback show '+(correct?'correct':'wrong');
   addXP(correct?150:50); enableNext();
