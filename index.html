@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synaptic Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson-deep: #8B0000;
+  --crimson: #C41E3A;
+  --cream: #F5F0E8;
+  --navy: #003153;
+  --steel: #6B9AB8;
+  --navy-mid: #0a4a6e;
+  --cream-dark: #EAE4D6;
+  --text-on-dark: rgba(245,240,232,0.85);
+  --text-muted-dark: rgba(245,240,232,0.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(139,0,0,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 80%, rgba(107,154,184,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(0,49,83,1) 0%, #001829 100%);
+}
+
+/* Neural network SVG lines */
+.neural-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+}
+
+/* Floating nodes */
+.node {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--steel);
+  animation: pulse-node 4s ease-in-out infinite;
+}
+.node:nth-child(1) { width:6px;height:6px;top:12%;left:8%;animation-delay:0s;background:var(--crimson); }
+.node:nth-child(2) { width:4px;height:4px;top:28%;left:22%;animation-delay:.8s; }
+.node:nth-child(3) { width:5px;height:5px;top:18%;left:45%;animation-delay:1.6s;background:var(--crimson-deep); }
+.node:nth-child(4) { width:3px;height:3px;top:40%;left:68%;animation-delay:2.4s; }
+.node:nth-child(5) { width:6px;height:6px;top:65%;left:15%;animation-delay:1.2s; }
+.node:nth-child(6) { width:4px;height:4px;top:75%;left:55%;animation-delay:.4s;background:var(--crimson); }
+.node:nth-child(7) { width:5px;height:5px;top:55%;left:82%;animation-delay:2s; }
+.node:nth-child(8) { width:3px;height:3px;top:85%;left:30%;animation-delay:1s; }
+.node:nth-child(9) { width:4px;height:4px;top:90%;left:75%;animation-delay:3s;background:var(--crimson); }
+.node:nth-child(10){ width:6px;height:6px;top:8%;left:78%;animation-delay:1.5s; }
+
+@keyframes pulse-node {
+  0%,100% { opacity:.4; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.8); }
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: fade-down .8s ease both;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+}
+
+.brand-text {}
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--cream);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.brand-sub {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--steel);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.header-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--steel);
+  border: 1px solid rgba(107,154,184,.3);
+  padding: 5px 14px;
+  border-radius: 20px;
+  letter-spacing: .06em;
+}
+
+/* ── HERO ── */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px 60px;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin-bottom: 20px;
+  animation: fade-up .8s .2s ease both;
+}
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--crimson);
+  opacity: .6;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 68px);
+  font-weight: 900;
+  color: var(--cream);
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  animation: fade-up .8s .35s ease both;
+}
+
+.hero-title span {
+  color: var(--steel);
+}
+
+.hero-tagline {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted-dark);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 56px;
+  animation: fade-up .8s .5s ease both;
+}
+
+/* ── PROMPT ── */
+.prompt-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted-dark);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  animation: fade-up .8s .6s ease both;
+}
+
+/* ── ROLE CARDS ── */
+.role-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 720px;
+  width: 100%;
+  animation: fade-up .8s .7s ease both;
+}
+
+@media (max-width: 560px) {
+  .role-cards { grid-template-columns: 1fr; gap: 14px; }
+}
+
+.role-card {
+  position: relative;
+  background: rgba(245,240,232,0.04);
+  border: 1.5px solid rgba(245,240,232,0.1);
+  border-radius: 20px;
+  padding: 36px 28px 32px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: all .3s ease;
+  overflow: hidden;
+  text-align: left;
+  display: block;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.role-card.staff::before {
+  background: linear-gradient(135deg, rgba(0,49,83,0.8), rgba(10,74,110,0.6));
+}
+
+.role-card.ops::before {
+  background: linear-gradient(135deg, rgba(0,49,83,0.8), rgba(10,74,110,0.6));
+}
+
+.role-card:hover {
+  border-color: rgba(245,240,232,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+
+.role-card:hover::before { opacity: 1; }
+
+.role-card:hover .card-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.role-card:hover .card-glow {
+  opacity: 1;
+}
+
+.card-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .4s ease;
+  filter: blur(40px);
+}
+
+.staff .card-glow { background: var(--steel); }
+.ops .card-glow { background: var(--steel); }
+.card-content { position: relative; z-index: 1; }
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 18px;
+}
+
+.staff .card-icon { background: rgba(107,154,184,0.15); border: 1px solid rgba(107,154,184,0.3); }
+.ops .card-icon { background: rgba(107,154,184,0.15); border: 1px solid rgba(107,154,184,0.3); }
+
+.card-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.staff .card-label { color: var(--steel); }
+.ops .card-label { color: var(--steel); }
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cream);
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+
+.card-desc {
+  font-size: 12.5px;
+  color: var(--text-muted-dark);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.card-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.module-tag {
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: .04em;
+}
+.staff .module-tag { background: rgba(107,154,184,0.12); color: var(--steel); border: 1px solid rgba(107,154,184,0.2); }
+.ops .module-tag { background: rgba(107,154,184,0.12); color: var(--steel); border: 1px solid rgba(107,154,184,0.2); }
+
+.card-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.staff .card-cta { color: var(--steel); }
+.ops .card-cta { color: var(--steel); }
+
+.card-arrow {
+  opacity: .6;
+  transition: all .3s ease;
+  font-size: 14px;
+}
+
+/* ── DIVIDER ── */
+.role-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted-dark);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 0 -4px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(245,240,232,0.06);
+  animation: fade-up .8s .9s ease both;
+}
+
+.footer-left {
+  font-size: 10.5px;
+  color: var(--text-muted-dark);
+}
+
+.footer-credit {
+  font-size: 10px;
+  color: rgba(107,154,184,0.5);
+  letter-spacing: .06em;
+}
+
+.footer-credit strong {
+  color: rgba(107,154,184,0.8);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes fade-down {
+  from { opacity:0; transform:translateY(-16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <!-- Neural network nodes -->
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+  <div class="node"></div>
+
+  <!-- Neural lines SVG -->
+  <svg class="neural-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <line x1="115" y1="108" x2="317" y2="252" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="317" y1="252" x2="648" y2="162" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="648" y1="162" x2="979" y2="360" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="979" y1="360" x2="1181" y2="495" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="115" y1="108" x2="648" y2="162" stroke="#C41E3A" stroke-width="1"/>
+    <line x1="216" y1="585" x2="317" y2="252" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="216" y1="585" x2="792" y2="675" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="792" y1="675" x2="1181" y2="495" stroke="#C41E3A" stroke-width="1"/>
+    <line x1="432" y1="765" x2="792" y2="675" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="1123" y1="72" x2="979" y2="360" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="1123" y1="72" x2="648" y2="162" stroke="#C41E3A" stroke-width="1"/>
+    <line x1="1080" y1="810" x2="792" y2="675" stroke="#6B9AB8" stroke-width="1"/>
+    <line x1="317" y1="252" x2="216" y2="585" stroke="#6B9AB8" stroke-width=".5"/>
+  </svg>
+</div>
+
+<div class="page">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <!-- Inline SVG logo mark -->
+      <svg class="brand-logo" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="21" cy="21" r="20" stroke="rgba(107,154,184,0.3)" stroke-width="1"/>
+        <!-- Neural S shape -->
+        <path d="M14 16 Q14 12 18 12 Q24 12 24 16 Q24 20 18 21 Q12 22 12 26 Q12 30 18 30 Q24 30 26 26" 
+              stroke="#6B9AB8" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- Nodes -->
+        <circle cx="14" cy="16" r="2" fill="#C41E3A"/>
+        <circle cx="24" cy="16" r="1.5" fill="#6B9AB8"/>
+        <circle cx="18" cy="21" r="2" fill="#6B9AB8"/>
+        <circle cx="12" cy="26" r="1.5" fill="#6B9AB8"/>
+        <circle cx="26" cy="26" r="2" fill="#C41E3A"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name">Synaptic</div>
+        <div class="brand-sub">Learning Hub</div>
+      </div>
+    </div>
+    <div class="header-badge">Financial Services · Demo</div>
+  </header>
+
+  <!-- HERO -->
+  <main class="hero">
+    <h1 class="hero-title">Synaptic <span>Learning</span></h1>
+    <p class="hero-tagline">Building Capabilities. Driving Impact.</p>
+
+    <p class="prompt-label">How are you accessing Synaptic today?</p>
+
+    <div class="role-cards">
+      <!-- STAFF -->
+      <a class="role-card staff" href="staff-hub.html">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-icon">🏢</div>
+          <div class="card-label">Corporate · All functions</div>
+          <div class="card-title">I'm Staff</div>
+          <p class="card-desc">Access learning experiences, AI-assisted coaching, soft skills training, technical academies, and career development tools.</p>
+          <div class="card-modules">
+            <span class="module-tag">Compliance Training</span>
+            <span class="module-tag">Synaptic Path Builder</span>
+            <span class="module-tag">Upcoming Academies</span>
+            <span class="module-tag">Career Coach</span>
+            <span class="module-tag">Training Requests</span>
+          </div>
+          <div class="card-cta">Enter Staff Hub <span class="card-arrow">→</span></div>
+        </div>
+      </a>
+
+      <!-- OPS -->
+      <a class="role-card ops" href="ops-hub.html">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-icon">🎯</div>
+          <div class="card-label">Operations · Customer facing</div>
+          <div class="card-title">I'm in Ops</div>
+          <p class="card-desc">Access learning experiences, customer-facing simulations, product knowledge, and soft skills training.</p>
+          <div class="card-modules">
+            <span class="module-tag">Shift Sim</span>
+            <span class="module-tag">Product Knowledge Base</span>
+            <span class="module-tag">Training Requests</span>
+          </div>
+          <div class="card-cta">Enter Ops Hub <span class="card-arrow">→</span></div>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-left">Synaptic Learning Hub · 2026 · Demo</span>
+    <span class="footer-credit">Designed & built by <strong>Dani Bedolla Studio</strong></span>
+  </footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shift Sim — Synaptic Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003153;
+  --navy-mid: #0a4a6e;
+  --steel: #6B9AB8;
+  --cream: #F5F0E8;
+  --crimson: #C41E3A;
+  --gold: #C9913A;
+  --green: #1DB87E;
+  --bg-game: #0a0a1a;
+  --bg-panel: #111128;
+  --bg-card: #1a1a35;
+  --pixel-green: #39FF14;
+  --pixel-blue: #00BFFF;
+  --pixel-red: #FF3B5C;
+  --pixel-gold: #FFD700;
+  --pixel-purple: #B47FFF;
+  --border-glow: rgba(107,154,184,0.3);
+  --text-dim: rgba(245,240,232,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg-game); color: var(--cream); min-height: 100vh; overflow-x: hidden; }
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ── TOPBAR ── */
+.topbar { background: var(--bg-panel); border-bottom: 2px solid var(--border-glow); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-pixel { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--steel); letter-spacing: .04em; line-height: 1.6; }
+.brand-pixel span { color: var(--pixel-green); }
+.back-link { font-size: 10px; font-weight: 600; color: var(--text-dim); letter-spacing: .04em; text-decoration: none; transition: color .2s; }
+.back-link:hover { color: var(--cream); }
+
+/* ── LAYOUT ── */
+.game-layout { display: grid; grid-template-columns: 260px 1fr 220px; gap: 0; min-height: calc(100vh - 52px); }
+@media (max-width: 900px) { .game-layout { grid-template-columns: 1fr; } }
+
+/* ── LEFT PANEL: PLAYER STATS ── */
+.panel-left { background: var(--bg-panel); border-right: 2px solid var(--border-glow); padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; }
+
+.pixel-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--pixel-green); letter-spacing: .06em; margin-bottom: 10px; line-height: 1.8; }
+
+/* Avatar */
+.avatar-block { text-align: center; }
+.avatar { width: 72px; height: 72px; margin: 0 auto 10px; position: relative; }
+.avatar-sprite { width: 100%; height: 100%; image-rendering: pixelated; }
+/* Pixel art avatar using CSS */
+.pixel-person { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; width: 64px; height: 64px; margin: 0 auto; }
+.px { width: 100%; aspect-ratio: 1; }
+.px-h { background: #C9913A; }
+.px-s { background: #6B9AB8; }
+.px-f { background: #F5D5B0; }
+.px-d { background: #003153; }
+.px-e { background: transparent; }
+.px-w { background: #fff; }
+.px-r { background: var(--pixel-red); }
+
+.agent-name { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--cream); margin-bottom: 4px; }
+.agent-level { font-size: 10px; color: var(--pixel-gold); font-weight: 700; }
+
+/* XP Bar */
+.xp-block { }
+.xp-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.xp-label { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--text-dim); }
+.xp-val { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--pixel-green); }
+.xp-bar-outer { height: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; image-rendering: pixelated; }
+.xp-bar-inner { height: 100%; background: linear-gradient(90deg, var(--pixel-green), #00ff88); border-radius: 1px; transition: width .6s ease; position: relative; }
+.xp-bar-inner::after { content: ''; position: absolute; right: 0; top: 0; width: 3px; height: 100%; background: rgba(255,255,255,0.6); animation: xp-blink 1s infinite; }
+@keyframes xp-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Stats grid */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-box { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 4px; padding: 10px 8px; text-align: center; }
+.stat-num { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--pixel-gold); margin-bottom: 4px; }
+.stat-lbl { font-size: 9px; color: var(--text-dim); font-weight: 600; letter-spacing: .03em; }
+
+/* Badges */
+.badges-block { }
+.badge-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.badge-item { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid; cursor: help; }
+.badge-earned { border-color: var(--pixel-gold); background: rgba(255,215,0,0.1); }
+.badge-locked { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); filter: grayscale(1); opacity: .4; }
+
+/* Leaderboard */
+.lb-block { }
+.lb-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.lb-rank { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); min-width: 16px; }
+.lb-rank.gold { color: var(--pixel-gold); }
+.lb-name { font-size: 10px; font-weight: 600; color: var(--cream); flex: 1; }
+.lb-xp { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--pixel-green); }
+.lb-row.you { background: rgba(107,154,184,0.08); border-radius: 4px; padding: 7px 6px; margin: 0 -6px; }
+.lb-you-tag { font-size: 8px; color: var(--steel); font-weight: 700; }
+
+/* ── CENTER: GAME AREA ── */
+.panel-center { display: flex; flex-direction: column; }
+
+/* Screen header */
+.game-screen-header { background: var(--bg-card); border-bottom: 2px solid var(--border-glow); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+.screen-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--pixel-blue); letter-spacing: .06em; }
+.shift-timer { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--pixel-red); display: flex; align-items: center; gap: 8px; }
+.timer-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pixel-red); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.accuracy-pill { font-size: 10px; font-weight: 700; color: var(--pixel-green); background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.3); padding: 3px 10px; border-radius: 4px; }
+
+/* GAME STATES */
+.game-state { display: none; flex: 1; flex-direction: column; }
+.game-state.active { display: flex; }
+
+/* ── INTRO SCREEN ── */
+#state-intro { align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+.intro-logo { font-family: 'Press Start 2P', monospace; font-size: clamp(18px, 3vw, 28px); color: var(--pixel-green); margin-bottom: 8px; text-shadow: 0 0 20px rgba(57,255,20,0.5); line-height: 1.4; }
+.intro-sub { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--steel); margin-bottom: 40px; line-height: 2; }
+.intro-desc { font-size: 13px; color: var(--text-dim); max-width: 480px; line-height: 1.8; margin-bottom: 36px; }
+.pixel-btn { font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 14px 28px; border: 2px solid var(--pixel-green); background: rgba(57,255,20,0.1); color: var(--pixel-green); cursor: pointer; border-radius: 4px; transition: all .2s; letter-spacing: .06em; }
+.pixel-btn:hover { background: rgba(57,255,20,0.2); box-shadow: 0 0 20px rgba(57,255,20,0.3); transform: translateY(-2px); }
+.pixel-btn.blue { border-color: var(--pixel-blue); background: rgba(0,191,255,0.1); color: var(--pixel-blue); }
+.pixel-btn.blue:hover { background: rgba(0,191,255,0.2); box-shadow: 0 0 20px rgba(0,191,255,0.3); }
+.pixel-btn.red { border-color: var(--pixel-red); background: rgba(255,59,92,0.1); color: var(--pixel-red); }
+.pixel-btn.gold { border-color: var(--pixel-gold); background: rgba(255,215,0,0.1); color: var(--pixel-gold); }
+.pixel-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.intro-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; max-width: 420px; width: 100%; margin-bottom: 36px; }
+.intro-stat { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; padding: 16px 10px; text-align: center; }
+.intro-stat-num { font-family: 'Press Start 2P', monospace; font-size: 14px; color: var(--pixel-gold); margin-bottom: 6px; }
+.intro-stat-label { font-size: 9px; color: var(--text-dim); font-weight: 600; }
+
+/* ── INCOMING CALL SCREEN ── */
+#state-ringing { align-items: center; justify-content: center; padding: 40px 24px; text-align: center; flex-direction: column; gap: 24px; }
+.phone-ring { width: 120px; height: 120px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--pixel-green); display: flex; align-items: center; justify-content: center; font-size: 48px; animation: ring-pulse 0.8s ease-in-out infinite; margin: 0 auto; }
+@keyframes ring-pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(57,255,20,0.4)} 50%{transform:scale(1.05);box-shadow:0 0 0 20px rgba(57,255,20,0)} }
+.ring-label { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--pixel-green); animation: text-blink .8s infinite; letter-spacing: .1em; }
+@keyframes text-blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.caller-info { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 10px; padding: 20px 28px; max-width: 380px; width: 100%; }
+.caller-id { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); margin-bottom: 8px; }
+.caller-name { font-size: 18px; font-weight: 800; color: var(--cream); margin-bottom: 4px; }
+.caller-type { font-size: 11px; color: var(--steel); font-weight: 600; }
+.call-actions { display: flex; gap: 16px; }
+
+/* ── ACTIVE CALL SCREEN ── */
+#state-call { flex-direction: column; padding: 0; }
+.call-header { background: var(--bg-card); border-bottom: 2px solid var(--border-glow); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+.call-status { display: flex; align-items: center; gap: 10px; }
+.call-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pixel-red); animation: blink 0.7s infinite; }
+.call-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--pixel-red); }
+.call-timer { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--pixel-gold); }
+
+/* Waveform */
+.waveform { display: flex; align-items: center; gap: 3px; height: 40px; padding: 8px 24px; background: rgba(0,0,0,0.2); }
+.wave-bar { width: 4px; border-radius: 2px; background: var(--pixel-green); animation: wave-anim 0.8s ease-in-out infinite; }
+.wave-bar:nth-child(1){height:30%;animation-delay:.0s}
+.wave-bar:nth-child(2){height:60%;animation-delay:.1s}
+.wave-bar:nth-child(3){height:90%;animation-delay:.2s}
+.wave-bar:nth-child(4){height:70%;animation-delay:.3s}
+.wave-bar:nth-child(5){height:50%;animation-delay:.4s}
+.wave-bar:nth-child(6){height:80%;animation-delay:.5s}
+.wave-bar:nth-child(7){height:40%;animation-delay:.6s}
+.wave-bar:nth-child(8){height:65%;animation-delay:.7s}
+.wave-bar:nth-child(9){height:55%;animation-delay:.8s}
+.wave-bar:nth-child(10){height:75%;animation-delay:.9s}
+.wave-bar:nth-child(11){height:35%;animation-delay:1.0s}
+.wave-bar:nth-child(12){height:85%;animation-delay:1.1s}
+@keyframes wave-anim { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.5)} }
+
+/* Transcript */
+.transcript { flex: 1; padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.bubble { max-width: 75%; padding: 12px 16px; border-radius: 10px; font-size: 13px; line-height: 1.65; }
+.bubble.customer { background: rgba(107,154,184,0.15); border: 1px solid rgba(107,154,184,0.25); color: var(--cream); align-self: flex-start; border-bottom-left-radius: 3px; }
+.bubble.agent { background: rgba(0,49,83,0.6); border: 1px solid rgba(107,154,184,0.2); color: var(--cream); align-self: flex-end; border-bottom-right-radius: 3px; }
+.bubble-label { font-size: 9px; font-weight: 700; margin-bottom: 5px; letter-spacing: .04em; text-transform: uppercase; }
+.bubble.customer .bubble-label { color: var(--steel); }
+.bubble.agent .bubble-label { color: var(--pixel-green); }
+
+/* Question */
+.question-block { background: var(--bg-card); border-top: 2px solid var(--border-glow); padding: 20px 24px; }
+.q-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--pixel-gold); margin-bottom: 10px; letter-spacing: .06em; }
+.q-text { font-size: 14px; font-weight: 700; color: var(--cream); margin-bottom: 16px; line-height: 1.5; }
+.q-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 600px) { .q-options { grid-template-columns: 1fr; } }
+.q-option { background: var(--bg-panel); border: 1.5px solid var(--border-glow); border-radius: 6px; padding: 12px 14px; font-size: 12.5px; color: var(--cream); cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif; transition: all .2s; display: flex; align-items: flex-start; gap: 10px; }
+.q-option:hover { border-color: var(--steel); background: rgba(107,154,184,0.08); }
+.q-option.correct { border-color: var(--pixel-green); background: rgba(57,255,20,0.1); }
+.q-option.wrong { border-color: var(--pixel-red); background: rgba(255,59,92,0.1); }
+.q-option:disabled { cursor: not-allowed; }
+.q-key { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--text-dim); min-width: 14px; margin-top: 2px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── RESULT SCREEN ── */
+#state-result { align-items: center; justify-content: center; padding: 40px 24px; text-align: center; flex-direction: column; gap: 20px; }
+.result-icon { font-size: 64px; margin-bottom: 8px; }
+.result-title { font-family: 'Press Start 2P', monospace; font-size: 14px; line-height: 1.8; }
+.result-title.win { color: var(--pixel-green); text-shadow: 0 0 20px rgba(57,255,20,0.5); }
+.result-title.fail { color: var(--pixel-red); }
+.result-xp { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--pixel-gold); margin: 8px 0; }
+.result-breakdown { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 10px; padding: 20px 28px; max-width: 380px; width: 100%; text-align: left; }
+.rb-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+.rb-row:last-child { border-bottom: none; }
+.rb-label { color: var(--text-dim); }
+.rb-val { font-weight: 700; color: var(--cream); }
+.rb-val.green { color: var(--pixel-green); }
+.rb-val.red { color: var(--pixel-red); }
+.result-tip { background: rgba(107,154,184,0.08); border: 1px solid rgba(107,154,184,0.2); border-radius: 8px; padding: 14px 18px; max-width: 420px; font-size: 12px; color: var(--text-dim); line-height: 1.7; text-align: left; }
+.result-tip strong { color: var(--steel); }
+.result-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* ── END OF SHIFT ── */
+#state-end { align-items: center; justify-content: center; padding: 40px 24px; text-align: center; flex-direction: column; gap: 20px; }
+.shift-complete { font-family: 'Press Start 2P', monospace; font-size: 12px; color: var(--pixel-gold); line-height: 1.8; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+.final-score-card { background: var(--bg-card); border: 2px solid var(--pixel-gold); border-radius: 12px; padding: 28px 36px; max-width: 440px; width: 100%; }
+.fsc-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--text-dim); margin-bottom: 16px; }
+.fsc-xp { font-family: 'Press Start 2P', monospace; font-size: 22px; color: var(--pixel-gold); margin-bottom: 6px; }
+.fsc-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 20px; }
+.fsc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.fsc-stat { text-align: center; }
+.fsc-stat-num { font-family: 'Press Start 2P', monospace; font-size: 13px; margin-bottom: 4px; }
+.fsc-stat-label { font-size: 9px; color: var(--text-dim); }
+
+/* ── RIGHT PANEL: CALL QUEUE ── */
+.panel-right { background: var(--bg-panel); border-left: 2px solid var(--border-glow); padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+
+.queue-item { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; padding: 12px; cursor: pointer; transition: all .2s; }
+.queue-item:hover { border-color: var(--steel); }
+.queue-item.active-call { border-color: var(--pixel-red); background: rgba(255,59,92,0.05); }
+.queue-item.completed { opacity: .45; }
+.qi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.qi-type { font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.type-collections { color: var(--pixel-red); }
+.type-service { color: var(--pixel-blue); }
+.type-fraud { color: var(--pixel-purple); }
+.type-onboarding { color: var(--pixel-green); }
+.qi-xp { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--pixel-gold); }
+.qi-name { font-size: 11.5px; font-weight: 700; color: var(--cream); margin-bottom: 3px; }
+.qi-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+.qi-status { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 9px; color: var(--text-dim); }
+.qi-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.dot-waiting { background: var(--pixel-gold); animation: blink 1.5s infinite; }
+.dot-done { background: var(--pixel-green); }
+.dot-active { background: var(--pixel-red); animation: blink .5s infinite; }
+
+/* ── XP POPUP ── */
+.xp-popup { position: fixed; top: 80px; right: 24px; font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--pixel-gold); background: var(--bg-card); border: 2px solid var(--pixel-gold); border-radius: 6px; padding: 10px 16px; z-index: 500; opacity: 0; transform: translateY(0); transition: all .3s; pointer-events: none; }
+.xp-popup.show { opacity: 1; transform: translateY(-10px); }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <div class="brand-pixel"><span>SHIFT</span> SIM<br>SYNAPTIC OPS</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+  <button id="soundToggle" onclick="toggleSound()" style="font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 12px;border:1px solid rgba(107,154,184,0.4);background:rgba(107,154,184,0.1);color:var(--steel);cursor:pointer;border-radius:4px;letter-spacing:.04em">🔊 SOUND ON</button>
+  <a class="back-link" href="ops-hub.html">← Back to Ops Hub</a>
+</div>
+</nav>
+
+<!-- XP POPUP -->
+<div class="xp-popup" id="xpPopup">+150 XP</div>
+
+<div class="game-layout">
+
+  <!-- LEFT PANEL -->
+  <div class="panel-left">
+    <div>
+      <div class="pixel-title">▶ AGENT PROFILE</div>
+      <!-- Pixel avatar -->
+      <div class="avatar-block">
+        <svg width="64" height="64" viewBox="0 0 8 8" style="image-rendering:pixelated;margin:0 auto 10px;display:block" xmlns="http://www.w3.org/2000/svg">
+          <!-- head -->
+          <rect x="2" y="0" width="4" height="4" fill="#C9913A"/>
+          <!-- face -->
+          <rect x="2.5" y="1" width="1" height="1" fill="#003153"/>
+          <rect x="4.5" y="1" width="1" height="1" fill="#003153"/>
+          <rect x="3" y="2.5" width="2" height=".5" fill="#8B0000"/>
+          <!-- body -->
+          <rect x="1.5" y="4" width="5" height="3" fill="#6B9AB8"/>
+          <!-- headset -->
+          <rect x="1.5" y="0.5" width=".5" height="2" fill="#003153"/>
+          <rect x="6" y="0.5" width=".5" height="2" fill="#003153"/>
+          <rect x="1.5" y="0.5" width="5" height=".5" fill="#003153"/>
+          <rect x="1" y="2" width="1" height=".8" fill="#F5F0E8"/>
+        </svg>
+        <div class="agent-name" id="agentName">AGENT_01</div>
+        <div class="agent-level" id="agentLevel">⭐ Level 1 · Trainee</div>
+      </div>
+    </div>
+
+    <div class="xp-block">
+      <div class="pixel-title">▶ EXPERIENCE</div>
+      <div class="xp-label-row">
+        <span class="xp-label">XP</span>
+        <span class="xp-val" id="xpDisplay">0 / 500</span>
+      </div>
+      <div class="xp-bar-outer">
+        <div class="xp-bar-inner" id="xpBar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="pixel-title">▶ THIS SHIFT</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num" id="statCalls">0</div>
+          <div class="stat-lbl">Calls</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statCorrect">0</div>
+          <div class="stat-lbl">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statXP">0</div>
+          <div class="stat-lbl">XP Earned</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statAcc">-</div>
+          <div class="stat-lbl">Accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="badges-block">
+      <div class="pixel-title">▶ BADGES</div>
+      <div class="badge-grid">
+        <div class="badge-item badge-locked" title="First Call — answer your first call">📞</div>
+        <div class="badge-item badge-locked" title="Perfect Shift — 100% accuracy">⭐</div>
+        <div class="badge-item badge-locked" title="Collections Pro — handle 3 collections calls">💰</div>
+        <div class="badge-item badge-locked" title="Fraud Buster — handle a fraud call">🛡️</div>
+        <div class="badge-item badge-locked" title="Speed Agent — answer in under 30s">⚡</div>
+        <div class="badge-item badge-locked" title="Empathy Star — nail a difficult customer">❤️</div>
+      </div>
+    </div>
+
+    <div class="lb-block">
+      <div class="pixel-title">▶ LEADERBOARD</div>
+      <div class="lb-row">
+        <span class="lb-rank gold">01</span>
+        <span class="lb-name">M. Reyes</span>
+        <span class="lb-xp">2840 XP</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">02</span>
+        <span class="lb-name">J. Torres</span>
+        <span class="lb-xp">2210 XP</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">03</span>
+        <span class="lb-name">A. López</span>
+        <span class="lb-xp">1980 XP</span>
+      </div>
+      <div class="lb-row you">
+        <span class="lb-rank">--</span>
+        <span class="lb-name">You</span>
+        <span class="lb-xp lb-you-tag" id="lbYourXP">0 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="panel-center">
+    <div class="game-screen-header">
+      <span class="screen-title" id="screenTitle">SYNAPTIC · SHIFT SIM</span>
+      <span class="shift-timer"><span class="timer-dot"></span><span id="shiftTimer">08:00</span></span>
+      <span class="accuracy-pill" id="accPill">ACC: --%</span>
+    </div>
+
+    <!-- INTRO STATE -->
+    <div class="game-state active" id="state-intro">
+      <div class="intro-logo">SHIFT SIM</div>
+      <div class="intro-sub">SYNAPTIC LEARNING HUB · OPS ACADEMY</div>
+      <p class="intro-desc">You're about to start your shift. Incoming calls will test your knowledge of products, collections protocols, customer service standards, and compliance. Answer correctly to earn XP and climb the leaderboard.</p>
+      <div class="intro-stats">
+        <div class="intro-stat">
+          <div class="intro-stat-num">5</div>
+          <div class="intro-stat-label">Calls this shift</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">500</div>
+          <div class="intro-stat-label">XP available</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">4</div>
+          <div class="intro-stat-label">Call types</div>
+        </div>
+      </div>
+      <button class="pixel-btn" onclick="startShift()">▶ START SHIFT</button>
+    </div>
+
+    <!-- RINGING STATE -->
+    <div class="game-state" id="state-ringing">
+      <div class="phone-ring">📞</div>
+      <div class="ring-label">INCOMING CALL...</div>
+      <div class="caller-info">
+        <div class="caller-id">CALLER ID</div>
+        <div class="caller-name" id="callerName">—</div>
+        <div class="caller-type" id="callerType">—</div>
+      </div>
+      <div class="call-actions">
+        <button class="pixel-btn" onclick="answerCall()">✔ ANSWER</button>
+        <button class="pixel-btn red" onclick="skipCall()">✖ SKIP</button>
+      </div>
+    </div>
+
+    <!-- ACTIVE CALL STATE -->
+    <div class="game-state" id="state-call">
+      <div class="call-header">
+        <div class="call-status">
+          <div class="call-dot"></div>
+          <span class="call-label">LIVE CALL</span>
+          <span class="call-label" id="callCallerLabel" style="color:var(--steel);margin-left:8px">—</span>
+        </div>
+        <span class="call-timer" id="callClock">0:00</span>
+      </div>
+      <div class="waveform">
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      </div>
+      <div class="transcript" id="transcript"></div>
+      <div class="question-block" id="questionBlock" style="display:none">
+        <div class="q-label">▶ WHAT DO YOU DO?</div>
+        <div class="q-text" id="qText"></div>
+        <div class="q-options" id="qOptions"></div>
+      </div>
+    </div>
+
+    <!-- RESULT STATE -->
+    <div class="game-state" id="state-result">
+      <div class="result-icon" id="resultIcon">✅</div>
+      <div class="result-title" id="resultTitle">CORRECT!</div>
+      <div class="result-xp" id="resultXP">+100 XP</div>
+      <div class="result-breakdown" id="resultBreakdown"></div>
+      <div class="result-tip" id="resultTip"></div>
+      <div class="result-actions">
+        <button class="pixel-btn blue" onclick="nextCall()" id="nextCallBtn">NEXT CALL →</button>
+      </div>
+    </div>
+
+    <!-- END OF SHIFT STATE -->
+    <div class="game-state" id="state-end">
+      <div class="shift-complete">SHIFT COMPLETE!</div>
+      <div class="final-score-card">
+        <div class="fsc-title">SHIFT SUMMARY</div>
+        <div class="fsc-xp" id="finalXP">0 XP</div>
+        <div class="fsc-sub" id="finalGrade">—</div>
+        <div class="fsc-grid">
+          <div class="fsc-stat">
+            <div class="fsc-stat-num" id="finalCalls" style="color:var(--pixel-blue)">0</div>
+            <div class="fsc-stat-label">Calls</div>
+          </div>
+          <div class="fsc-stat">
+            <div class="fsc-stat-num" id="finalCorrect" style="color:var(--pixel-green)">0</div>
+            <div class="fsc-stat-label">Correct</div>
+          </div>
+          <div class="fsc-stat">
+            <div class="fsc-stat-num" id="finalAcc" style="color:var(--pixel-gold)">0%</div>
+            <div class="fsc-stat-label">Accuracy</div>
+          </div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="pixel-btn" onclick="restartShift()">↺ NEW SHIFT</button>
+        <button class="pixel-btn blue" onclick="location.href='ops-hub.html'">← OPS HUB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: CALL QUEUE -->
+  <div class="panel-right">
+    <div class="pixel-title">▶ CALL QUEUE</div>
+    <div id="callQueue"></div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  GAME DATA
+// ═══════════════════════════════════════
+const CALLS = [
+  {
+    id: 1,
+    caller: "Carlos M.",
+    type: "Collections",
+    typeClass: "type-collections",
+    xpReward: 100,
+    transcript: [
+      { role: "customer", text: "Hi, I have a payment due and I just got laid off. I can't pay right now. Are you going to charge me late fees? I really can't afford this." },
+      { role: "agent", text: "I'm sorry to hear that, Carlos. Let me take a look at your account and see what options we have available for your situation." },
+      { role: "customer", text: "I just need some time. Is there anything you can do? I don't want to damage my credit." }
+    ],
+    question: "What is the most appropriate next step when a customer says they can't pay due to job loss?",
+    options: [
+      { text: "Inform them that late fees will apply automatically and there's nothing you can do.", correct: false },
+      { text: "Offer a payment arrangement or hardship plan and note the account to pause collections activity temporarily.", correct: true },
+      { text: "Transfer them immediately to a supervisor without explaining anything.", correct: false },
+      { text: "Tell them to call back when they have money.", correct: false }
+    ],
+    feedbackCorrect: "Correct. Offering a hardship plan or payment arrangement shows empathy, keeps the relationship intact, and follows collections protocol. Always note the account.",
+    feedbackWrong: "In a hardship situation, your first move is always to explore options — payment arrangements, due date extensions, or hardship programs. Never dismiss the customer."
+  },
+  {
+    id: 2,
+    caller: "Sandra V.",
+    type: "Customer Service",
+    typeClass: "type-service",
+    xpReward: 100,
+    transcript: [
+      { role: "customer", text: "I was charged twice for the same transaction! I see two charges of $450 on my statement. One on the 3rd and one on the 5th. This is unacceptable." },
+      { role: "agent", text: "I understand your frustration, Sandra. I can see your account here. Let me verify those transactions for you right now." },
+      { role: "customer", text: "Please! I need that money back. This is my rent money." }
+    ],
+    question: "What is the correct process for handling a suspected duplicate charge?",
+    options: [
+      { text: "Tell the customer the charge looks legitimate and they must have forgotten.", correct: false },
+      { text: "Apologize and issue an immediate refund without verifying the transaction.", correct: false },
+      { text: "Verify the transaction details, open a dispute case if confirmed duplicate, and give the customer a reference number and timeline.", correct: true },
+      { text: "Ask the customer to visit a branch to resolve this in person.", correct: false }
+    ],
+    feedbackCorrect: "Correct. Always verify first, then follow dispute resolution protocol. The customer needs a case number and a clear timeline to feel reassured.",
+    feedbackWrong: "Never refund without verification, and never dismiss the claim. Open a dispute case, verify the transactions, and give a reference number with a resolution timeline."
+  },
+  {
+    id: 3,
+    caller: "UNKNOWN NUMBER",
+    type: "Fraud Alert",
+    typeClass: "type-fraud",
+    xpReward: 150,
+    transcript: [
+      { role: "customer", text: "Hello... I just got a text saying my card was used in Shanghai for $2,000. I'm in Mexico City. I didn't make this purchase!" },
+      { role: "agent", text: "Thank you for calling in immediately, sir. I can see the flagged transaction. Can you confirm the last 4 digits of your card?" },
+      { role: "customer", text: "It's 4821. That's definitely not me. What happens now? Will I get my money back?" }
+    ],
+    question: "When a customer reports an unauthorized international transaction, what is your FIRST action?",
+    options: [
+      { text: "Tell the customer to visit a branch and fill out a paper form.", correct: false },
+      { text: "Freeze the card immediately, confirm the unauthorized transaction, open a fraud claim, and explain the chargeback timeline.", correct: true },
+      { text: "Ask the customer if they might have forgotten making the purchase.", correct: false },
+      { text: "Transfer to the fraud team and disconnect without explanation.", correct: false }
+    ],
+    feedbackCorrect: "Excellent. Fraud protocol: freeze first, confirm details, open the claim, communicate the timeline. Speed and clarity are everything in fraud situations.",
+    feedbackWrong: "In a confirmed fraud situation: freeze the card immediately, confirm the unauthorized transactions, open a fraud claim, and always explain what happens next to the customer."
+  },
+  {
+    id: 4,
+    caller: "Miguel A.",
+    type: "Onboarding",
+    typeClass: "type-onboarding",
+    xpReward: 100,
+    transcript: [
+      { role: "customer", text: "Hi, I just got approved for my card but I can't activate it. I scanned the QR code and it says error. I've tried three times." },
+      { role: "agent", text: "Welcome aboard, Miguel! I'm sorry for the trouble. Let me help you get this sorted. Can you tell me which device you're using?" },
+      { role: "customer", text: "iPhone 13. The latest iOS. I also tried on my wife's Android and same error." }
+    ],
+    question: "The customer can't activate their new card via QR code on two different devices. What do you do?",
+    options: [
+      { text: "Tell them the app must be broken and to try again tomorrow.", correct: false },
+      { text: "Walk them through the manual activation code option in the app, and escalate to tech support if that also fails.", correct: true },
+      { text: "Ask them to return the card and apply again.", correct: false },
+      { text: "Send them an email with a PDF guide and end the call.", correct: false }
+    ],
+    feedbackCorrect: "Right. Always have a backup path — the manual activation code. If both methods fail, escalate to tech with full documentation. Never leave a new customer stuck.",
+    feedbackWrong: "Never dismiss a new customer on activation day. Walk them through the manual code path. If both QR and manual fail, escalate immediately — this is a high-priority issue."
+  },
+  {
+    id: 5,
+    caller: "Patricia L.",
+    type: "Collections",
+    typeClass: "type-collections",
+    xpReward: 150,
+    transcript: [
+      { role: "customer", text: "I'm calling because I want to negotiate my balance. I owe $8,000 and I can pay $3,000 right now as a settlement. Take it or leave it." },
+      { role: "agent", text: "I appreciate you calling in, Patricia, and I understand you want to resolve this. Let me review your account and see what settlement options are available." },
+      { role: "customer", text: "I know you have programs. Just tell me if you can do it or not. I have the money ready today." }
+    ],
+    question: "A customer wants to settle a $8,000 balance for $3,000 (37.5%). What is the correct response?",
+    options: [
+      { text: "Accept the $3,000 immediately — cash today is better than nothing.", correct: false },
+      { text: "Reject the offer and demand full payment.", correct: false },
+      { text: "Check the account eligibility for settlement programs, communicate what's authorized, and escalate to a supervisor if the offer falls outside your approval limit.", correct: true },
+      { text: "Tell the customer settlements are not possible and to pay in full.", correct: false }
+    ],
+    feedbackCorrect: "Exactly right. You never accept or reject a settlement outside your authorization. Verify eligibility, communicate what's available, and escalate if needed. Process protects both parties.",
+    feedbackWrong: "Settlement decisions follow strict authorization limits. Always check account eligibility for programs, state what's available at your level, and escalate for anything outside your approval limit."
+  }
+];
+
+// ═══════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════
+let state = {
+  xp: 0,
+  xpTarget: 500,
+  calls: 0,
+  correct: 0,
+  currentCallIndex: 0,
+  currentCall: null,
+  callTimer: null,
+  callSeconds: 0,
+  shiftActive: false
+};
+
+function $(id) { return document.getElementById(id); }
+
+function setState(id) {
+  document.querySelectorAll('.game-state').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function updateStats() {
+  $('xpDisplay').textContent = state.xp + ' / ' + state.xpTarget;
+  $('xpBar').style.width = Math.min(100, (state.xp / state.xpTarget) * 100) + '%';
+  $('statCalls').textContent = state.calls;
+  $('statCorrect').textContent = state.correct;
+  $('statXP').textContent = state.xp;
+  const acc = state.calls > 0 ? Math.round((state.correct / state.calls) * 100) : 0;
+  $('statAcc').textContent = state.calls > 0 ? acc + '%' : '-';
+  $('accPill').textContent = 'ACC: ' + (state.calls > 0 ? acc + '%' : '--%');
+  $('lbYourXP').textContent = state.xp + ' XP';
+
+  // Level update
+  let level = 'Trainee', star = '⭐';
+  if (state.xp >= 400) { level = 'Senior Agent'; star = '⭐⭐⭐'; }
+  else if (state.xp >= 250) { level = 'Agent'; star = '⭐⭐'; }
+  else if (state.xp >= 100) { level = 'Junior Agent'; star = '⭐'; }
+  $('agentLevel').textContent = star + ' Level ' + (state.xp >= 400 ? 4 : state.xp >= 250 ? 3 : state.xp >= 100 ? 2 : 1) + ' · ' + level;
+}
+
+function buildQueue() {
+  const q = $('callQueue');
+  q.innerHTML = '';
+  CALLS.forEach((call, i) => {
+    const div = document.createElement('div');
+    div.className = 'queue-item' + (i === state.currentCallIndex ? ' active-call' : i < state.currentCallIndex ? ' completed' : '');
+    div.id = 'qItem' + i;
+    div.innerHTML = `
+      <div class="qi-top">
+        <span class="qi-type ${call.typeClass}">${call.type}</span>
+        <span class="qi-xp">+${call.xpReward} XP</span>
+      </div>
+      <div class="qi-name">${call.caller}</div>
+      <div class="qi-status">
+        <span class="qi-dot ${i < state.currentCallIndex ? 'dot-done' : i === state.currentCallIndex ? 'dot-active' : 'dot-waiting'}"></span>
+        ${i < state.currentCallIndex ? 'Completed' : i === state.currentCallIndex ? 'Active' : 'Waiting'}
+      </div>`;
+    q.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════
+//  SHIFT TIMER
+// ═══════════════════════════════════════
+let shiftSeconds = 480;
+let shiftInterval;
+
+function startShiftTimer() {
+  shiftInterval = setInterval(() => {
+    shiftSeconds--;
+    const m = Math.floor(shiftSeconds / 60);
+    const s = shiftSeconds % 60;
+    $('shiftTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (shiftSeconds <= 0) { clearInterval(shiftInterval); }
+  }, 1000);
+}
+
+// ═══════════════════════════════════════
+//  CALL TIMER
+// ═══════════════════════════════════════
+function startCallTimer() {
+  state.callSeconds = 0;
+  state.callTimer = setInterval(() => {
+    state.callSeconds++;
+    const m = Math.floor(state.callSeconds / 60);
+    const s = state.callSeconds % 60;
+    $('callClock').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+}
+
+function stopCallTimer() {
+  if (state.callTimer) { clearInterval(state.callTimer); state.callTimer = null; }
+}
+
+// ═══════════════════════════════════════
+//  GAME FLOW
+// ═══════════════════════════════════════
+function startShift() {
+  state.shiftActive = true;
+  startShiftTimer();
+  buildQueue();
+  showRinging();
+}
+
+function showRinging() {
+  if (state.currentCallIndex >= CALLS.length) { endShift(); return; }
+  const call = CALLS[state.currentCallIndex];
+  state.currentCall = call;
+  $('callerName').textContent = call.caller;
+  $('callerType').textContent = call.type + ' Call';
+  buildQueue();
+  setState('state-ringing');
+}
+
+function answerCall() {
+  const call = state.currentCall;
+  $('callCallerLabel').textContent = call.caller + ' · ' + call.type;
+  $('screenTitle').textContent = 'LIVE CALL · ' + call.type.toUpperCase();
+  setState('state-call');
+  startCallTimer();
+
+  // Build transcript with delay
+  const tr = $('transcript');
+  tr.innerHTML = '';
+  $('questionBlock').style.display = 'none';
+
+  let delay = 300;
+  call.transcript.forEach((line, i) => {
+    setTimeout(() => {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + line.role;
+      bubble.innerHTML = `<div class="bubble-label">${line.role === 'customer' ? '👤 ' + call.caller : '🎧 You'}</div>${line.text}`;
+      tr.appendChild(bubble);
+      tr.scrollTop = tr.scrollHeight;
+      if (i === call.transcript.length - 1) {
+        setTimeout(() => showQuestion(call), 800);
+      }
+    }, delay);
+    delay += 1200;
+  });
+}
+
+function skipCall() {
+  state.calls++;
+  state.currentCallIndex++;
+  updateStats();
+  buildQueue();
+  showRinging();
+}
+
+function showQuestion(call) {
+  call._wrongAttempts = 0;
+  $('qText').textContent = call.question;
+  const opts = $('qOptions');
+  opts.innerHTML = '';
+  // Remove any old inline feedback
+  const oldFb = document.getElementById('inlineFeedback');
+  if (oldFb) oldFb.remove();
+
+  const keys = ['A', 'B', 'C', 'D'];
+  call.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.innerHTML = `<span class="q-key">${keys[i]}</span>${opt.text}`;
+    btn.onclick = () => handleAnswer(opt.correct, call, btn);
+    opts.appendChild(btn);
+  });
+  $('questionBlock').style.display = 'block';
+  $('transcript').scrollTop = $('transcript').scrollHeight;
+}
+
+function showInlineFeedback(correct, text) {
+  // Remove old feedback if any
+  const old = document.getElementById('inlineFeedback');
+  if (old) old.remove();
+
+  const fb = document.createElement('div');
+  fb.id = 'inlineFeedback';
+  fb.style.cssText = `
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.65;
+    border: 1.5px solid ${correct ? 'rgba(57,255,20,0.35)' : 'rgba(255,59,92,0.35)'};
+    background: ${correct ? 'rgba(57,255,20,0.07)' : 'rgba(255,59,92,0.07)'};
+    color: ${correct ? 'var(--pixel-green)' : 'var(--pixel-red)'};
+    animation: fadeIn .3s ease;
+  `;
+  fb.innerHTML = `<strong>${correct ? '✅ Correct!' : '❌ Not quite —'}</strong> ${text}`;
+  $('qOptions').after(fb);
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function handleAnswer(correct, call, clickedBtn) {
+  if (correct) {
+    // Lock all buttons
+    document.querySelectorAll('.q-option').forEach(b => { b.disabled = true; b.onclick = null; });
+    clickedBtn.classList.add('correct');
+
+    // XP reduced by wrong attempts (min 50% of reward)
+    const penalty = Math.min(call._wrongAttempts * 20, Math.floor(call.xpReward * 0.5));
+    const xpEarned = call.xpReward - penalty;
+
+    stopCallTimer();
+    state.calls++;
+    state.correct++;
+    state.xp += xpEarned;
+    showXPPopup('+' + xpEarned + ' XP');
+    updateStats();
+
+    showInlineFeedback(true, call.feedbackCorrect + (call._wrongAttempts > 0 ? ` (${call._wrongAttempts} attempt${call._wrongAttempts > 1 ? 's' : ''} — XP reduced to ${xpEarned})` : ''));
+
+    setTimeout(() => showResult(true, call, xpEarned), 1400);
+
+  } else {
+    // Mark this button wrong, keep others active
+    clickedBtn.classList.add('wrong');
+    clickedBtn.disabled = true;
+    clickedBtn.onclick = null;
+    call._wrongAttempts = (call._wrongAttempts || 0) + 1;
+
+    showInlineFeedback(false, call.feedbackWrong + ' Try again.');
+  }
+}
+
+function showResult(correct, call, xpEarned) {
+  $('resultIcon').textContent = correct ? '✅' : '❌';
+  $('resultTitle').textContent = correct ? 'CORRECT!' : 'WRONG ANSWER';
+  $('resultTitle').className = 'result-title ' + (correct ? 'win' : 'fail');
+  $('resultXP').textContent = correct ? '+' + xpEarned + ' XP EARNED' : '+0 XP';
+
+  const acc = Math.round((state.correct / state.calls) * 100);
+  $('resultBreakdown').innerHTML = `
+    <div class="rb-row"><span class="rb-label">Call type</span><span class="rb-val">${call.type}</span></div>
+    <div class="rb-row"><span class="rb-label">Handle time</span><span class="rb-val">${Math.floor(state.callSeconds/60)}m ${state.callSeconds%60}s</span></div>
+    <div class="rb-row"><span class="rb-label">XP this call</span><span class="rb-val ${correct ? 'green' : 'red'}">${correct ? '+' + xpEarned : '0'} XP</span></div>
+    <div class="rb-row"><span class="rb-label">Shift accuracy</span><span class="rb-val">${acc}%</span></div>
+    <div class="rb-row"><span class="rb-label">Total XP</span><span class="rb-val green">${state.xp} XP</span></div>`;
+
+  $('resultTip').innerHTML = `<strong>${correct ? '💡 Why this works:' : '⚠️ What you should know:'}</strong><br>${correct ? call.feedbackCorrect : call.feedbackWrong}`;
+
+  state.currentCallIndex++;
+  const isLast = state.currentCallIndex >= CALLS.length;
+  $('nextCallBtn').textContent = isLast ? 'END SHIFT ▶' : 'NEXT CALL →';
+
+  setState('state-result');
+}
+
+function nextCall() {
+  if (state.currentCallIndex >= CALLS.length) { endShift(); return; }
+  buildQueue();
+  showRinging();
+}
+
+function endShift() {
+  clearInterval(shiftInterval);
+  const acc = state.calls > 0 ? Math.round((state.correct / state.calls) * 100) : 0;
+  let grade = '❌ Needs Improvement';
+  if (acc === 100) grade = '🏆 Perfect Shift!';
+  else if (acc >= 80) grade = '⭐ Great Work!';
+  else if (acc >= 60) grade = '👍 Good Shift';
+
+  $('finalXP').textContent = state.xp + ' XP';
+  $('finalGrade').textContent = grade;
+  $('finalCalls').textContent = state.calls;
+  $('finalCorrect').textContent = state.correct;
+  $('finalAcc').textContent = acc + '%';
+
+  // Unlock badges
+  if (state.calls >= 1) unlockBadge(0);
+  if (acc === 100) unlockBadge(1);
+  if (state.calls >= 3) unlockBadge(2);
+
+  setState('state-end');
+}
+
+function unlockBadge(index) {
+  const badges = document.querySelectorAll('.badge-item');
+  if (badges[index]) {
+    badges[index].classList.remove('badge-locked');
+    badges[index].classList.add('badge-earned');
+  }
+}
+
+function restartShift() {
+  state = { xp: 0, xpTarget: 500, calls: 0, correct: 0, currentCallIndex: 0, currentCall: null, callTimer: null, callSeconds: 0, shiftActive: false };
+  shiftSeconds = 480;
+  $('shiftTimer').textContent = '8:00';
+  $('screenTitle').textContent = 'SYNAPTIC · SHIFT SIM';
+  updateStats();
+  buildQueue();
+  setState('state-intro');
+}
+
+function showXPPopup(text) {
+  const popup = $('xpPopup');
+  popup.textContent = text;
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 1800);
+}
+
+// Init
+updateStats();
+buildQueue();
+
+// ═══════════════════════════════════════
+//  AUDIO ENGINE
+// ═══════════════════════════════════════
+let audioCtx = null;
+let soundEnabled = true;
+let bgNoiseNode = null;
+let bgGainNode = null;
+let ringInterval = null;
+let ttsUtterance = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('soundToggle');
+  btn.textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
+  btn.style.color = soundEnabled ? 'var(--steel)' : 'rgba(245,240,232,0.3)';
+  if (!soundEnabled) {
+    stopRing();
+    stopBgAmbience();
+    stopTTS();
+  } else {
+    getAudioCtx();
+  }
+}
+
+// ── CORE TONE GENERATOR ──
+function playTone(freq, type, duration, gainVal, startTime, fadeOut) {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = type || 'square';
+  osc.frequency.setValueAtTime(freq, ctx.currentTime + (startTime || 0));
+  gain.gain.setValueAtTime(gainVal || 0.08, ctx.currentTime + (startTime || 0));
+  if (fadeOut) gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (startTime || 0) + duration);
+  osc.start(ctx.currentTime + (startTime || 0));
+  osc.stop(ctx.currentTime + (startTime || 0) + duration);
+}
+
+function playNoise(duration, gainVal, startTime) {
+  if (!soundEnabled) return;
+  const ctx = getAudioCtx();
+  const bufferSize = ctx.sampleRate * duration;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(gainVal || 0.05, ctx.currentTime + (startTime || 0));
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (startTime || 0) + duration);
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(ctx.currentTime + (startTime || 0));
+}
+
+// ── SHIFT START FANFARE ──
+function playShiftStart() {
+  if (!soundEnabled) return;
+  // Ascending fanfare
+  const notes = [261, 329, 392, 523, 659];
+  notes.forEach((freq, i) => playTone(freq, 'square', 0.12, 0.1, i * 0.1, true));
+  setTimeout(() => playTone(784, 'square', 0.4, 0.12, 0, true), 600);
+}
+
+// ── PHONE RINGING ──
+function startRing() {
+  if (!soundEnabled) return;
+  stopRing();
+  const doRing = () => {
+    if (!soundEnabled) return;
+    playTone(480, 'square', 0.15, 0.08, 0, true);
+    playTone(620, 'square', 0.15, 0.06, 0.15, true);
+    playTone(480, 'square', 0.15, 0.08, 0.3, true);
+    playTone(620, 'square', 0.15, 0.06, 0.45, true);
+  };
+  doRing();
+  ringInterval = setInterval(doRing, 1800);
+}
+
+function stopRing() {
+  if (ringInterval) { clearInterval(ringInterval); ringInterval = null; }
+}
+
+// ── CALL CONNECT SOUND ──
+function playCallConnect() {
+  if (!soundEnabled) return;
+  playTone(880, 'sine', 0.08, 0.1, 0, true);
+  playTone(1100, 'sine', 0.08, 0.08, 0.09, true);
+}
+
+// ── 8-BIT DIALOGUE BLIP (per character) ──
+function playDialogueBlip(role) {
+  if (!soundEnabled) return;
+  // Customer = slightly lower, agent = slightly higher
+  const freq = role === 'customer' ? 320 + Math.random() * 80 : 480 + Math.random() * 100;
+  playTone(freq, 'square', 0.04, 0.06, 0, true);
+}
+
+// ── CORRECT ANSWER JINGLE ──
+function playCorrect() {
+  if (!soundEnabled) return;
+  const melody = [523, 659, 784, 1047];
+  melody.forEach((f, i) => playTone(f, 'square', 0.1, 0.1, i * 0.08, true));
+  setTimeout(() => {
+    playTone(1047, 'square', 0.3, 0.12, 0, true);
+    playTone(1319, 'square', 0.3, 0.08, 0, true);
+  }, 400);
+}
+
+// ── WRONG ANSWER BUZZ ──
+function playWrong() {
+  if (!soundEnabled) return;
+  playTone(180, 'sawtooth', 0.2, 0.12, 0, true);
+  playTone(160, 'sawtooth', 0.2, 0.1, 0.2, true);
+  playNoise(0.15, 0.08, 0.1);
+}
+
+// ── XP COIN SOUND ──
+function playXP() {
+  if (!soundEnabled) return;
+  playTone(988, 'square', 0.06, 0.1, 0, true);
+  playTone(1319, 'square', 0.1, 0.1, 0.07, true);
+}
+
+// ── SHIFT END FANFARE ──
+function playShiftEnd() {
+  if (!soundEnabled) return;
+  const melody = [392, 523, 659, 523, 659, 784, 1047];
+  melody.forEach((f, i) => playTone(f, 'square', 0.15, 0.1, i * 0.12, true));
+}
+
+// ── BACKGROUND OFFICE AMBIENCE ──
+function startBgAmbience() {
+  if (!soundEnabled) return;
+  stopBgAmbience();
+  const ctx = getAudioCtx();
+
+  // Very quiet low hum (office AC)
+  const osc1 = ctx.createOscillator();
+  bgGainNode = ctx.createGain();
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(60, ctx.currentTime);
+  bgGainNode.gain.setValueAtTime(0.015, ctx.currentTime);
+  osc1.connect(bgGainNode);
+  bgGainNode.connect(ctx.destination);
+  osc1.start();
+  bgNoiseNode = osc1;
+
+  // Subtle keyboard clicks every few seconds
+  const clickPattern = () => {
+    if (!soundEnabled || !bgNoiseNode) return;
+    const clicks = Math.floor(Math.random() * 5) + 2;
+    for (let i = 0; i < clicks; i++) {
+      const delay = Math.random() * 0.3;
+      playNoise(0.02, 0.02, delay);
+    }
+    bgClickTimeout = setTimeout(clickPattern, 2000 + Math.random() * 3000);
+  };
+  setTimeout(clickPattern, 1500);
+}
+
+let bgClickTimeout = null;
+
+function stopBgAmbience() {
+  if (bgNoiseNode) { try { bgNoiseNode.stop(); } catch(e){} bgNoiseNode = null; }
+  if (bgClickTimeout) { clearTimeout(bgClickTimeout); bgClickTimeout = null; }
+}
+
+// ── TEXT TO SPEECH ──
+function stopTTS() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function speakLine(text, role, onEnd) {
+  stopTTS();
+  if (!soundEnabled || !window.speechSynthesis) { if (onEnd) onEnd(); return; }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = role === 'customer' ? 0.92 : 1.0;
+  utter.pitch = role === 'customer' ? 0.85 : 1.15;
+  utter.volume = 0.85;
+
+  // Try to pick a voice
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    const enVoices = voices.filter(v => v.lang.startsWith('en'));
+    if (role === 'customer') {
+      // Pick a different voice for customer vs agent
+      const v = enVoices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('alex')) || enVoices[0];
+      if (v) utter.voice = v;
+    } else {
+      const v = enVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('karen')) || enVoices[1] || enVoices[0];
+      if (v) utter.voice = v;
+    }
+  }
+
+  utter.onend = () => { if (onEnd) onEnd(); };
+  utter.onerror = () => { if (onEnd) onEnd(); };
+  window.speechSynthesis.speak(utter);
+}
+
+// ── LOAD VOICES (async in some browsers) ──
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  window.speechSynthesis.getVoices();
+}
+
+// ═══════════════════════════════════════
+//  PATCH GAME FUNCTIONS WITH SOUND
+// ═══════════════════════════════════════
+
+// Override startShift to add fanfare
+const _startShift = startShift;
+startShift = function() {
+  getAudioCtx();
+  playShiftStart();
+  setTimeout(() => startBgAmbience(), 700);
+  _startShift();
+};
+
+// Override showRinging to add ring sound
+const _showRinging = showRinging;
+showRinging = function() {
+  stopTTS();
+  if (state.currentCallIndex < CALLS.length) {
+    setTimeout(startRing, 300);
+  }
+  _showRinging();
+};
+
+// Override answerCall to stop ring + add connect sound + TTS transcript
+const _answerCall = answerCall;
+answerCall = function() {
+  stopRing();
+  playCallConnect();
+
+  const call = state.currentCall;
+  $('callCallerLabel').textContent = call.caller + ' · ' + call.type;
+  $('screenTitle').textContent = 'LIVE CALL · ' + call.type.toUpperCase();
+  setState('state-call');
+  startCallTimer();
+
+  const tr = $('transcript');
+  tr.innerHTML = '';
+  $('questionBlock').style.display = 'none';
+
+  // Build transcript with TTS + blips
+  let lineIndex = 0;
+
+  function showNextLine() {
+    if (lineIndex >= call.transcript.length) {
+      setTimeout(() => showQuestion(call), 600);
+      return;
+    }
+    const line = call.transcript[lineIndex];
+    lineIndex++;
+
+    // Add bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble ' + line.role;
+    bubble.innerHTML = `<div class="bubble-label">${line.role === 'customer' ? '👤 ' + call.caller : '🎧 You'}</div>`;
+    const textSpan = document.createElement('span');
+    bubble.appendChild(textSpan);
+    tr.appendChild(bubble);
+    tr.scrollTop = tr.scrollHeight;
+
+    // Animate text character by character with blips
+    let charIndex = 0;
+    const chars = line.text.split('');
+    const charInterval = setInterval(() => {
+      if (charIndex < chars.length) {
+        textSpan.textContent += chars[charIndex];
+        if (charIndex % 3 === 0) playDialogueBlip(line.role);
+        charIndex++;
+        tr.scrollTop = tr.scrollHeight;
+      } else {
+        clearInterval(charInterval);
+        // Speak the line with TTS
+        speakLine(line.text, line.role, () => {
+          setTimeout(showNextLine, 400);
+        });
+      }
+    }, 18);
+  }
+
+  showNextLine();
+};
+
+// Override skipCall to stop ring
+const _skipCall = skipCall;
+skipCall = function() {
+  stopRing();
+  stopTTS();
+  _skipCall();
+};
+
+// Override handleAnswer to add sounds
+const _handleAnswer = handleAnswer;
+handleAnswer = function(correct, call, clickedBtn) {
+  stopTTS();
+  if (correct) {
+    playCorrect();
+    setTimeout(() => playXP(), 450);
+  } else {
+    playWrong();
+  }
+  _handleAnswer(correct, call, clickedBtn);
+};
+
+// Override endShift to add fanfare
+const _endShift = endShift;
+endShift = function() {
+  stopBgAmbience();
+  stopTTS();
+  playShiftEnd();
+  _endShift();
+};
+
+// Override restartShift to clean up audio
+const _restartShift = restartShift;
+restartShift = function() {
+  stopRing();
+  stopBgAmbience();
+  stopTTS();
+  _restartShift();
+};
+</script>
+</body>
+</html>

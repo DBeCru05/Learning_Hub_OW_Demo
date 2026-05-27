@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ops Hub — Synaptic Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson-deep: #8B0000;
+  --crimson: #C41E3A;
+  --cream: #F5F0E8;
+  --navy: #003153;
+  --navy-mid: #0a4a6e;
+  --steel: #6B9AB8;
+  --steel-light: rgba(107,154,184,0.12);
+  --bg: #F5F0E8;
+  --card: #FFFFFF;
+  --text-primary: #003153;
+  --text-secondary: #3a5a72;
+  --text-muted: #7a9ab0;
+  --border: rgba(0,49,83,0.1);
+  --shadow-sm: 0 2px 12px rgba(0,49,83,0.07);
+  --shadow-hover: 0 16px 48px rgba(0,49,83,0.16);
+  --r: 12px;
+  --r-lg: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+a { text-decoration: none; color: inherit; }
+
+/* TOPBAR */
+.topbar { background: var(--navy); padding: 0 40px; height: 58px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { width: 34px; height: 34px; }
+.brand-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 800; color: var(--cream); letter-spacing: -.01em; line-height: 1; }
+.brand-sub { font-size: 9px; font-weight: 500; color: var(--steel); letter-spacing: .12em; text-transform: uppercase; margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.hub-badge { font-size: 9.5px; font-weight: 700; color: var(--steel); border: 1px solid rgba(107,154,184,0.3); padding: 4px 12px; border-radius: 20px; letter-spacing: .08em; text-transform: uppercase; }
+.back-link { font-size: 11px; font-weight: 600; color: rgba(245,240,232,0.4); transition: color .2s; }
+.back-link:hover { color: var(--cream); }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); padding: 44px 40px 48px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; right: -60px; top: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(107,154,184,0.07); }
+.hero-inner { position: relative; z-index: 1; max-width: 900px; }
+.hero-eyebrow { font-size: 9.5px; font-weight: 700; color: var(--steel); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 42px); font-weight: 900; color: var(--cream); letter-spacing: -.02em; line-height: 1.1; margin-bottom: 10px; }
+.hero h1 span { color: var(--steel); }
+.hero-sub { font-size: 13.5px; color: rgba(245,240,232,0.55); line-height: 1.65; max-width: 520px; }
+.hero-stats { display: flex; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+.hero-stat-num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; color: var(--cream); line-height: 1; margin-bottom: 3px; }
+.hero-stat-label { font-size: 10px; font-weight: 600; color: rgba(245,240,232,0.4); letter-spacing: .08em; text-transform: uppercase; }
+
+/* MAIN */
+.main { padding: 36px 40px 60px; max-width: 1100px; margin: 0 auto; }
+
+/* SECTION LABEL */
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* HERO FEATURE CARD — Shift Sim */
+.feature-hero { background: var(--navy); border-radius: 20px; padding: 36px 40px; margin-bottom: 14px; position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; transition: transform .25s, box-shadow .25s; text-decoration: none; color: inherit; }
+.feature-hero::before { content: ''; position: absolute; right: -40px; top: -40px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, rgba(107,154,184,0.12) 0%, transparent 70%); }
+.feature-hero:hover { transform: translateY(-3px); box-shadow: 0 20px 60px rgba(0,49,83,0.35); }
+.fh-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--steel); background: rgba(107,154,184,0.15); border: 1px solid rgba(107,154,184,0.3); padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+.fh-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--cream); letter-spacing: -.02em; margin-bottom: 8px; line-height: 1.1; }
+.fh-title span { color: var(--steel); }
+.fh-desc { font-size: 13px; color: rgba(245,240,232,0.5); line-height: 1.7; max-width: 480px; margin-bottom: 20px; }
+.fh-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--steel); color: var(--navy); font-size: 12px; font-weight: 800; padding: 11px 22px; border-radius: 10px; letter-spacing: .04em; transition: background .2s; }
+.fh-cta:hover { background: #88b8d4; }
+.fh-visual { font-size: 72px; opacity: .12; user-select: none; }
+@media (max-width: 600px) { .fh-visual { display: none; } .feature-hero { grid-template-columns: 1fr; } }
+
+/* MODULE GRID */
+.module-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 860px) { .module-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .module-grid { grid-template-columns: 1fr; } }
+
+.module-card { background: var(--card); border-radius: var(--r-lg); border: 1.5px solid var(--border); padding: 24px 22px 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: all .25s ease; text-decoration: none; color: inherit; }
+.module-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+.module-card:hover .mc-arrow { opacity: 1; transform: translateX(3px); }
+.mc-icon-wrap { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+.mc-tag { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; }
+.mc-title { font-size: 15px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -.01em; line-height: 1.2; }
+.mc-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; flex: 1; margin-bottom: 16px; }
+.mc-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1.5px solid var(--border); }
+.mc-label { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+.mc-arrow { font-size: 16px; font-weight: 700; opacity: .35; transition: all .2s; }
+
+.card-steel .mc-icon-wrap { background: var(--steel-light); }
+.card-steel .mc-tag { color: var(--navy-mid); }
+.card-steel .mc-arrow { color: var(--steel); }
+.card-steel:hover { border-color: var(--steel); }
+
+.card-navy .mc-icon-wrap { background: rgba(0,49,83,0.07); }
+.card-navy .mc-tag { color: var(--navy); }
+.card-navy .mc-arrow { color: var(--navy); }
+.card-navy:hover { border-color: var(--navy-mid); }
+
+.module-card.wide { grid-column: span 2; flex-direction: row; align-items: flex-start; gap: 20px; }
+.module-card.wide .mc-icon-wrap { flex-shrink: 0; }
+.module-card.wide .mc-body { flex: 1; display: flex; flex-direction: column; }
+@media (max-width: 860px) { .module-card.wide { grid-column: span 1; flex-direction: column; } }
+
+/* KNOWLEDGE BASE SPECIAL CARD */
+.kb-card { background: var(--card); border-radius: var(--r-lg); border: 1.5px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm); grid-column: span 3; }
+@media (max-width: 860px) { .kb-card { grid-column: span 2; } }
+@media (max-width: 520px) { .kb-card { grid-column: span 1; } }
+.kb-header { background: var(--navy); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.kb-header-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800; color: var(--cream); }
+.kb-header-sub { font-size: 11px; color: rgba(245,240,232,0.4); margin-top: 3px; }
+.kb-search { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(107,154,184,0.2); border-radius: 10px; padding: 8px 14px; min-width: 240px; }
+.kb-search input { background: none; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--cream); width: 100%; }
+.kb-search input::placeholder { color: rgba(245,240,232,0.3); }
+.kb-body { padding: 24px 28px; }
+.kb-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+@media (max-width: 700px) { .kb-categories { grid-template-columns: repeat(2,1fr); } }
+.kb-cat { background: var(--bg); border-radius: var(--r); border: 1.5px solid var(--border); padding: 16px; cursor: pointer; transition: all .2s; }
+.kb-cat:hover { border-color: var(--steel); box-shadow: var(--shadow-sm); }
+.kb-cat-icon { font-size: 22px; margin-bottom: 8px; }
+.kb-cat-title { font-size: 12.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+.kb-cat-count { font-size: 10px; color: var(--text-muted); }
+.kb-featured { display: flex; flex-direction: column; gap: 8px; }
+.kb-article { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-radius: var(--r); border: 1px solid var(--border); cursor: pointer; transition: all .2s; }
+.kb-article:hover { border-color: var(--steel); background: rgba(107,154,184,0.05); }
+.kb-article-left { display: flex; align-items: center; gap: 10px; }
+.kb-article-tag { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.tag-product { background: var(--steel-light); color: var(--navy-mid); }
+.tag-process { background: rgba(0,49,83,0.07); color: var(--navy); }
+.tag-policy { background: rgba(196,30,58,0.07); color: var(--crimson-deep); }
+.kb-article-title { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+.kb-article-arrow { font-size: 14px; color: var(--text-muted); opacity: .5; }
+
+/* ADMIN STRIP */
+.admin-strip { background: var(--navy); border-radius: 14px; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 16px; flex-wrap: wrap; }
+.admin-left { display: flex; align-items: center; gap: 14px; }
+.admin-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(107,154,184,0.12); border: 1px solid rgba(107,154,184,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.admin-title { font-size: 13px; font-weight: 700; color: var(--cream); margin-bottom: 2px; }
+.admin-sub { font-size: 11px; color: rgba(245,240,232,0.4); }
+.admin-btn { font-size: 11px; font-weight: 700; color: var(--steel); border: 1px solid rgba(107,154,184,0.3); padding: 8px 18px; border-radius: 8px; white-space: nowrap; transition: all .2s; text-decoration: none; }
+.admin-btn:hover { background: rgba(107,154,184,0.1); }
+
+/* FOOTER */
+.footer { background: var(--navy); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
+.footer span { font-size: 10.5px; color: rgba(245,240,232,0.25); }
+.footer strong { color: rgba(107,154,184,0.6); }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 34 34" fill="none">
+      <circle cx="17" cy="17" r="16" stroke="rgba(107,154,184,0.3)" stroke-width="1"/>
+      <path d="M11 13 Q11 10 15 10 Q20 10 20 13 Q20 17 15 17.5 Q10 18 10 22 Q10 25 15 25 Q20 25 22 22" stroke="#6B9AB8" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <circle cx="11" cy="13" r="1.6" fill="#C41E3A"/>
+      <circle cx="20" cy="13" r="1.2" fill="#6B9AB8"/>
+      <circle cx="15" cy="17.5" r="1.6" fill="#6B9AB8"/>
+      <circle cx="10" cy="22" r="1.2" fill="#6B9AB8"/>
+      <circle cx="22" cy="22" r="1.6" fill="#C41E3A"/>
+    </svg>
+    <div>
+      <div class="brand-name">Synaptic</div>
+      <div class="brand-sub">Learning Hub</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="hub-badge">Ops Hub</span>
+    <a class="back-link" href="index.html">← Switch role</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Operations · Customer Facing · Financial Services</div>
+    <h1>Ready for<br><span>every shift.</span></h1>
+    <p class="hero-sub">Simulations, product knowledge, compliance, and soft skills — everything you need to show up sharp, handle any call, and keep growing.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Core modules</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Live</div>
+        <div class="hero-stat-label">Call simulations</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">∞</div>
+        <div class="hero-stat-label">Knowledge articles</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- FEATURED: SHIFT SIM -->
+  <div class="section-label">Featured</div>
+  <a class="feature-hero" href="shift-sim.html">
+    <div>
+      <div class="fh-badge">🎮 Interactive · AI-Powered</div>
+      <div class="fh-title">Shift <span>Sim</span></div>
+      <p class="fh-desc">Step into a real shift. Handle incoming calls, resolve customer issues, apply product knowledge under pressure, and earn XP. Built for collections, customer service, and onboarding teams.</p>
+      <div class="fh-cta">Start your shift →</div>
+    </div>
+    <div class="fh-visual">📞</div>
+  </a>
+
+  <!-- MODULES -->
+  <div class="section-label" style="margin-top:36px">Your Modules</div>
+
+  <div class="module-grid">
+
+    <!-- COMPLIANCE -->
+    <a class="module-card card-steel" href="https://www.workday.com" target="_blank">
+      <div class="mc-icon-wrap">🛡️</div>
+      <div class="mc-tag">Mandatory · Compliance</div>
+      <div class="mc-title">Compliance Training</div>
+      <p class="mc-desc">Regulatory, audit-required, and role-specific compliance courses. Track completions and certifications — connected to Workday.</p>
+      <div class="mc-footer">
+        <span class="mc-label">Opens in Workday / LMS</span>
+        <span class="mc-arrow">↗</span>
+      </div>
+    </a>
+
+    <!-- THE ARENA -->
+    <a class="module-card card-steel" href="arena.html">
+      <div class="mc-icon-wrap">🏆</div>
+      <div class="mc-tag">Competitive · XP · Prizes</div>
+      <div class="mc-title">The Arena</div>
+      <p class="mc-desc">Your squad standings, the Q2 leaderboard, and what's on the line this season. Every module you complete earns XP.</p>
+      <div class="mc-footer">
+        <span class="mc-label">Q2 Active · Season ends Jun 30</span>
+        <span class="mc-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- TRAINING REQUESTS -->
+    <a class="module-card card-navy wide" href="requests.html">
+      <div class="mc-icon-wrap" style="font-size:22px">📋</div>
+      <div class="mc-body">
+        <div class="mc-tag">L&D Support</div>
+        <div class="mc-title">Training Requests</div>
+        <p class="mc-desc">Need training for your team that isn't here yet? Submit a request. The L&D team will review and follow up within 2 business days — urgent regulatory requests within 24 hours.</p>
+        <div class="mc-footer">
+          <span class="mc-label">Response within 2 business days</span>
+          <span class="mc-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- PRODUCT KNOWLEDGE BASE — FULL WIDTH -->
+    <div class="kb-card">
+      <div class="kb-header">
+        <div>
+          <div class="kb-header-title">Product Knowledge Base</div>
+          <div class="kb-header-sub">Everything you need to know about our products, processes, and policies</div>
+        </div>
+        <div class="kb-search">
+          <svg width="14" height="14" fill="none" stroke="rgba(245,240,232,0.4)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search knowledge base..." />
+        </div>
+      </div>
+      <div class="kb-body">
+        <div class="kb-categories">
+          <div class="kb-cat">
+            <div class="kb-cat-icon">💳</div>
+            <div class="kb-cat-title">Card Products</div>
+            <div class="kb-cat-count">24 articles</div>
+          </div>
+          <div class="kb-cat">
+            <div class="kb-cat-icon">📞</div>
+            <div class="kb-cat-title">Call Handling</div>
+            <div class="kb-cat-count">18 articles</div>
+          </div>
+          <div class="kb-cat">
+            <div class="kb-cat-icon">⚙️</div>
+            <div class="kb-cat-title">Collections Process</div>
+            <div class="kb-cat-count">31 articles</div>
+          </div>
+          <div class="kb-cat">
+            <div class="kb-cat-icon">📋</div>
+            <div class="kb-cat-title">Policies & Escalation</div>
+            <div class="kb-cat-count">15 articles</div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Most accessed this week</div>
+        <div class="kb-featured">
+          <div class="kb-article">
+            <div class="kb-article-left">
+              <span class="kb-article-tag tag-product">Product</span>
+              <span class="kb-article-title">Credit limit increase — eligibility criteria and process</span>
+            </div>
+            <span class="kb-article-arrow">→</span>
+          </div>
+          <div class="kb-article">
+            <div class="kb-article-left">
+              <span class="kb-article-tag tag-process">Process</span>
+              <span class="kb-article-title">Handling payment disputes — step-by-step resolution guide</span>
+            </div>
+            <span class="kb-article-arrow">→</span>
+          </div>
+          <div class="kb-article">
+            <div class="kb-article-left">
+              <span class="kb-article-tag tag-policy">Policy</span>
+              <span class="kb-article-title">Escalation matrix — when and how to escalate a case</span>
+            </div>
+            <span class="kb-article-arrow">→</span>
+          </div>
+          <div class="kb-article">
+            <div class="kb-article-left">
+              <span class="kb-article-tag tag-product">Product</span>
+              <span class="kb-article-title">Card activation flow — troubleshooting common issues</span>
+            </div>
+            <span class="kb-article-arrow">→</span>
+          </div>
+          <div class="kb-article">
+            <div class="kb-article-left">
+              <span class="kb-article-tag tag-process">Process</span>
+              <span class="kb-article-title">Collections script — first contact, tone guidelines, outcomes</span>
+            </div>
+            <span class="kb-article-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADMIN STRIP -->
+  <div class="admin-strip">
+    <div class="admin-left">
+      <div class="admin-icon">📊</div>
+      <div>
+        <div class="admin-title">Ops L&D Metrics Dashboard</div>
+        <div class="admin-sub">Restricted · L&D & Ops leadership access only</div>
+      </div>
+    </div>
+    <a class="admin-btn" href="metrics.html">View dashboard →</a>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <span>Synaptic Learning Hub · Ops Hub · 2026</span>
+  <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
+</footer>
+
+</body>
+</html>

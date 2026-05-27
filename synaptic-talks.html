@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synaptic Talks — Synaptic Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--cream:#F5F0E8;
+  --gold:#C9913A;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;
+  --text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);
+  --shadow-sm:0 2px 12px rgba(0,49,83,0.07);--r:12px;--r-lg:16px;
+  --dark:#0a0f1e;--dark-mid:#111828;--dark-card:#1a2338;--dark-border:rgba(107,154,184,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--cream);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* TOPBAR */
+.topbar{background:rgba(10,15,30,0.96);border-bottom:1px solid var(--dark-border);padding:0 32px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:30px;height:30px}
+.brand-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--cream)}
+.brand-sub{font-size:8px;color:var(--steel);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.35);transition:color .2s}
+.back-link:hover{color:var(--cream)}
+
+/* HERO */
+.hero{
+  padding:56px 40px 48px;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 0%,rgba(107,154,184,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 100%,rgba(201,145,58,0.05) 0%,transparent 60%);
+  position:relative;
+}
+.hero-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--steel);opacity:.5}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);font-weight:900;color:var(--cream);letter-spacing:-.02em;line-height:1.05;margin-bottom:10px}
+.hero h1 span{color:var(--steel)}
+.hero-sub{font-size:13.5px;color:rgba(245,240,232,0.45);max-width:500px;line-height:1.7;margin-bottom:28px}
+
+/* LANG TOGGLE */
+.lang-toggle{display:inline-flex;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:4px}
+.lang-btn{font-size:11.5px;font-weight:700;padding:7px 20px;border-radius:20px;cursor:pointer;transition:all .2s;background:none;border:none;color:rgba(245,240,232,0.4);font-family:'DM Sans',sans-serif;letter-spacing:.02em}
+.lang-btn.active{background:var(--steel);color:var(--navy)}
+
+/* MAIN */
+.main{padding:36px 40px 80px;max-width:900px;margin:0 auto}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
+
+/* EPISODE CARD */
+.ep-card{background:var(--dark-card);border:1px solid var(--dark-border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:16px;transition:border-color .25s,box-shadow .25s}
+.ep-card:hover{border-color:rgba(107,154,184,0.3);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.ep-card.playing{border-color:rgba(107,154,184,0.5);box-shadow:0 0 0 1px rgba(107,154,184,0.2)}
+
+/* EPISODE TOP */
+.ep-top{display:grid;grid-template-columns:120px 1fr;min-height:120px}
+@media(max-width:560px){.ep-top{grid-template-columns:80px 1fr}}
+
+.ep-art{display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;position:relative;overflow:hidden}
+@media(max-width:560px){.ep-art{font-size:26px}}
+
+/* Gradient backgrounds per episode */
+.ep-card:nth-child(1) .ep-art{background:linear-gradient(135deg,#0d2540,#1a3a5c)}
+.ep-card:nth-child(2) .ep-art{background:linear-gradient(135deg,#1a0d2e,#2d1a4a)}
+.ep-card:nth-child(3) .ep-art{background:linear-gradient(135deg,#0d1f1a,#1a3530)}
+
+/* Animated bars when playing */
+.sound-bars{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:none;align-items:flex-end;gap:2px;height:16px}
+.ep-card.playing .sound-bars{display:flex}
+.bar{width:3px;border-radius:2px;background:var(--steel);animation:sound-anim .6s ease-in-out infinite}
+.bar:nth-child(1){height:40%;animation-delay:0s}
+.bar:nth-child(2){height:80%;animation-delay:.1s}
+.bar:nth-child(3){height:60%;animation-delay:.2s}
+.bar:nth-child(4){height:100%;animation-delay:.3s}
+.bar:nth-child(5){height:50%;animation-delay:.4s}
+@keyframes sound-anim{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.5)}}
+
+.ep-info{padding:22px 24px 18px}
+.ep-num{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:6px}
+.ep-title{font-family:'Playfair Display',serif;font-size:clamp(16px,2.5vw,20px);font-weight:800;color:var(--cream);margin-bottom:6px;line-height:1.25;letter-spacing:-.01em}
+.ep-desc{font-size:12px;color:rgba(245,240,232,0.4);line-height:1.65;margin-bottom:14px}
+.ep-meta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ep-dur{font-size:11px;color:rgba(245,240,232,0.3);display:flex;align-items:center;gap:5px}
+.ep-tags{display:flex;gap:5px;flex-wrap:wrap}
+.ep-tag{font-size:9.5px;font-weight:600;padding:2px 9px;border-radius:10px;background:rgba(107,154,184,0.1);color:var(--steel);border:1px solid rgba(107,154,184,0.15)}
+
+/* PLAYER */
+.ep-player{border-top:1px solid var(--dark-border);padding:16px 24px;background:rgba(0,0,0,0.2);display:flex;align-items:center;gap:16px}
+
+.play-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--steel)}
+.play-btn:hover{background:#88b8d4;transform:scale(1.05)}
+.play-btn.playing{background:rgba(107,154,184,0.2);border:1.5px solid var(--steel)}
+.play-btn svg{fill:var(--navy)}
+.play-btn.playing svg{fill:var(--steel)}
+
+.player-body{flex:1;display:flex;flex-direction:column;gap:6px}
+.waveform-wrap{position:relative;height:36px;cursor:pointer}
+.waveform-bg{position:absolute;inset:0;display:flex;align-items:center;gap:1px}
+.wf-bar{flex:1;border-radius:1px;background:rgba(255,255,255,0.08);transition:background .1s}
+.wf-bar.played{background:rgba(107,154,184,0.6)}
+.wf-bar.current{background:var(--steel)}
+.progress-overlay{position:absolute;inset:0;cursor:pointer}
+
+.time-row{display:flex;justify-content:space-between;align-items:center}
+.time-cur{font-size:10.5px;color:var(--steel);font-variant-numeric:tabular-nums;font-weight:600}
+.time-total{font-size:10px;color:rgba(245,240,232,0.25);font-variant-numeric:tabular-nums}
+
+.vol-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.vol-icon{font-size:14px;opacity:.5;cursor:pointer}
+.vol-slider{width:60px;height:3px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.1);border-radius:2px;outline:none;cursor:pointer}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--steel);cursor:pointer}
+
+/* HIDDEN AUDIO */
+audio{display:none}
+
+/* FOOTER */
+.footer{background:rgba(10,15,30,0.8);border-top:1px solid var(--dark-border);padding:16px 40px;display:flex;justify-content:space-between}
+.footer span{font-size:10.5px;color:rgba(245,240,232,0.2)}.footer strong{color:rgba(107,154,184,0.5)}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 30 30" fill="none">
+      <circle cx="15" cy="15" r="14" stroke="rgba(107,154,184,0.3)" stroke-width="1"/>
+      <path d="M10 12 Q10 9 13 9 Q17 9 17 12 Q17 15 13 15.5 Q9 16 9 19 Q9 21 13 21 Q17 21 19 19" stroke="#6B9AB8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      <circle cx="10" cy="12" r="1.4" fill="#C41E3A"/><circle cx="17" cy="12" r="1.1" fill="#6B9AB8"/>
+      <circle cx="13" cy="15.5" r="1.4" fill="#6B9AB8"/><circle cx="9" cy="19" r="1.1" fill="#6B9AB8"/>
+      <circle cx="19" cy="19" r="1.4" fill="#C41E3A"/>
+    </svg>
+    <div><div class="brand-name">Synaptic</div><div class="brand-sub">Learning Hub</div></div>
+  </div>
+  <a class="back-link" href="staff-hub.html">← Staff Hub</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Audio · On the go</div>
+  <h1>Synaptic <span>Talks</span></h1>
+  <p class="hero-sub">Short episodes on leadership, growth, and the future of work. Built for the commute, the walk, the space between meetings.</p>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnEn" onclick="setLang('en')">🇺🇸 English</button>
+    <button class="lang-btn" id="btnEs" onclick="setLang('es')">🇲🇽 Español</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-label">3 Episodes · Season 1</div>
+  <div id="epList"></div>
+</div>
+
+<footer class="footer">
+  <span>Synaptic Talks · Learning Hub · 2026</span>
+  <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
+</footer>
+
+<script>
+const EPISODES = {
+  en: [
+    {
+      num: 'EP. 01',
+      icon: '🙋',
+      title: 'How to Ask for Help Without Looking Incompetent',
+      desc: 'There\'s a reason people avoid asking for help — it feels like admitting weakness. But the research says the opposite. We unpack why asking well is actually a power move.',
+      file: 'synaptic_talks_ep1_en.m4a',
+      tags: ['Soft Skills', 'Psychological Safety', 'Communication']
+    },
+    {
+      num: 'EP. 02',
+      icon: '🤝',
+      title: 'Why AI Makes Emotional Intelligence Essential',
+      desc: 'As AI takes over the analytical and procedural, what\'s left is distinctly human. We explore why EQ is becoming the most competitive skill in the AI era.',
+      file: 'synaptic_talks_ep2_en.m4a',
+      tags: ['AI', 'Emotional Intelligence', 'Future of Work']
+    },
+    {
+      num: 'EP. 03',
+      icon: '📊',
+      title: 'Stop Data Dumping: Functional Storytelling',
+      desc: 'Nobody remembers a slide full of numbers. We break down how to turn data into a narrative that actually moves people to act — without losing the substance.',
+      file: 'synaptic_talks_ep3_en.m4a',
+      tags: ['Communication', 'Data', 'Storytelling']
+    }
+  ],
+  es: [
+    {
+      num: 'EP. 01',
+      icon: '🙋',
+      title: 'Cómo Pedir Ayuda Sin Parecer Incompetente',
+      desc: 'Hay una razón por la que la gente evita pedir ayuda — se siente como admitir debilidad. Pero la investigación dice lo contrario. Exploramos por qué pedir bien es en realidad un movimiento de poder.',
+      file: 'synaptic_talks_ep_es.m4a',
+      tags: ['Soft Skills', 'Seguridad Psicológica', 'Comunicación']
+    },
+    {
+      num: 'EP. 02',
+      icon: '🤝',
+      title: 'Por Qué la IA Hace Esencial la Inteligencia Emocional',
+      desc: 'A medida que la IA toma lo analítico y procedimental, lo que queda es distintivamente humano. Exploramos por qué la IE se está convirtiendo en la habilidad más competitiva en la era de la IA.',
+      file: 'synaptic_talks_ep2_es.m4a',
+      tags: ['IA', 'Inteligencia Emocional', 'Futuro del Trabajo']
+    },
+    {
+      num: 'EP. 03',
+      icon: '📊',
+      title: 'Deja de Tirar Datos: Storytelling Funcional',
+      desc: 'Nadie recuerda una diapositiva llena de números. Exploramos cómo convertir datos en una narrativa que realmente mueve a las personas a actuar — sin perder la sustancia.',
+      file: 'synaptic_talks_ep3_es.m4a',
+      tags: ['Comunicación', 'Datos', 'Storytelling']
+    }
+  ]
+};
+
+let lang = 'en';
+let activeAudio = null;
+let activeCard = null;
+let tickInterval = null;
+
+// Generate waveform bars (random heights for visual effect)
+function genBars(id, count) {
+  const heights = [];
+  for (let i = 0; i < count; i++) {
+    // Natural-looking waveform shape — louder in middle
+    const pos = i / count;
+    const envelope = Math.sin(pos * Math.PI) * 0.6 + 0.4;
+    heights.push(0.2 + Math.random() * 0.8 * envelope);
+  }
+  return heights;
+}
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btnEn').classList.toggle('active', l === 'en');
+  document.getElementById('btnEs').classList.toggle('active', l === 'es');
+  stopAll();
+  renderEpisodes();
+}
+
+function stopAll() {
+  if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  if (activeCard) activeCard.classList.remove('playing');
+  activeAudio = null; activeCard = null;
+}
+
+function renderEpisodes() {
+  const list = document.getElementById('epList');
+  list.innerHTML = '';
+  const BAR_COUNT = 60;
+
+  EPISODES[lang].forEach((ep, i) => {
+    const bars = genBars(i, BAR_COUNT);
+    const barsHtml = bars.map((h, j) =>
+      `<div class="wf-bar" id="bar_${i}_${j}" style="height:${Math.round(h*100)}%;min-height:3px"></div>`
+    ).join('');
+
+    const card = document.createElement('div');
+    card.className = 'ep-card';
+    card.id = 'card_' + i;
+    card.innerHTML = `
+      <div class="ep-top">
+        <div class="ep-art">
+          <span style="font-size:36px;position:relative;z-index:1">${ep.icon}</span>
+          <div class="sound-bars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div>
+          </div>
+        </div>
+        <div class="ep-info">
+          <div class="ep-num">${ep.num}</div>
+          <div class="ep-title">${ep.title}</div>
+          <div class="ep-desc">${ep.desc}</div>
+          <div class="ep-meta-row">
+            <span class="ep-dur">🎙 Audio episode</span>
+            <div class="ep-tags">${ep.tags.map(t => `<span class="ep-tag">${t}</span>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="ep-player">
+        <button class="play-btn" id="playbtn_${i}" onclick="togglePlay(${i})">
+          <svg id="playicon_${i}" width="14" height="14" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
+        </button>
+        <div class="player-body">
+          <div class="waveform-wrap" onclick="seekWave(event,${i})">
+            <div class="waveform-bg" id="waveform_${i}">${barsHtml}</div>
+          </div>
+          <div class="time-row">
+            <span class="time-cur" id="timecur_${i}">0:00</span>
+            <span class="time-total" id="timetot_${i}">--:--</span>
+          </div>
+        </div>
+        <div class="vol-wrap">
+          <span class="vol-icon" onclick="toggleMute(${i})">🔊</span>
+          <input type="range" class="vol-slider" id="vol_${i}" min="0" max="1" step="0.05" value="0.8" oninput="setVol(${i},this.value)">
+        </div>
+        <audio id="audio_${i}" src="${ep.file}" preload="metadata"></audio>
+      </div>`;
+    list.appendChild(card);
+
+    // Update duration when metadata loads
+    const audio = card.querySelector(`#audio_${i}`);
+    audio.addEventListener('loadedmetadata', () => {
+      const m = Math.floor(audio.duration / 60);
+      const s = Math.floor(audio.duration % 60);
+      document.getElementById(`timetot_${i}`).textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    });
+    audio.addEventListener('ended', () => {
+      stopAll();
+      document.getElementById(`playicon_${i}`).innerHTML = '<path d="M5 3l14 9-14 9V3z"/>';
+    });
+  });
+}
+
+function togglePlay(i) {
+  const audio = document.getElementById(`audio_${i}`);
+  const card = document.getElementById(`card_${i}`);
+  const btn = document.getElementById(`playbtn_${i}`);
+  const icon = document.getElementById(`playicon_${i}`);
+
+  // If something else is playing, stop it first
+  if (activeAudio && activeAudio !== audio) {
+    stopAll();
+    // Reset previous play button
+    EPISODES[lang].forEach((_, j) => {
+      const prevIcon = document.getElementById(`playicon_${j}`);
+      const prevBtn = document.getElementById(`playbtn_${j}`);
+      if (prevIcon) { prevIcon.innerHTML = '<path d="M5 3l14 9-14 9V3z"/>'; }
+      if (prevBtn) prevBtn.classList.remove('playing');
+    });
+  }
+
+  if (audio.paused) {
+    audio.volume = parseFloat(document.getElementById(`vol_${i}`).value);
+    audio.play();
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    btn.classList.add('playing');
+    card.classList.add('playing');
+    activeAudio = audio;
+    activeCard = card;
+    startTick(i);
+  } else {
+    audio.pause();
+    icon.innerHTML = '<path d="M5 3l14 9-14 9V3z"/>';
+    btn.classList.remove('playing');
+    card.classList.remove('playing');
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    activeAudio = null; activeCard = null;
+  }
+}
+
+function startTick(i) {
+  if (tickInterval) clearInterval(tickInterval);
+  const BAR_COUNT = 60;
+  tickInterval = setInterval(() => {
+    const audio = document.getElementById(`audio_${i}`);
+    if (!audio || audio.paused) return;
+    const pct = audio.currentTime / (audio.duration || 1);
+    const played = Math.floor(pct * BAR_COUNT);
+    for (let j = 0; j < BAR_COUNT; j++) {
+      const bar = document.getElementById(`bar_${i}_${j}`);
+      if (!bar) continue;
+      bar.classList.remove('played', 'current');
+      if (j < played) bar.classList.add('played');
+      else if (j === played) bar.classList.add('current');
+    }
+    const m = Math.floor(audio.currentTime / 60);
+    const s = Math.floor(audio.currentTime % 60);
+    document.getElementById(`timecur_${i}`).textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }, 250);
+}
+
+function seekWave(e, i) {
+  const audio = document.getElementById(`audio_${i}`);
+  const wrap = e.currentTarget;
+  const rect = wrap.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  if (audio.duration) {
+    audio.currentTime = pct * audio.duration;
+    if (audio.paused) {
+      togglePlay(i); // auto-play on seek
+    }
+  }
+}
+
+function setVol(i, val) {
+  const audio = document.getElementById(`audio_${i}`);
+  if (audio) audio.volume = parseFloat(val);
+}
+
+function toggleMute(i) {
+  const audio = document.getElementById(`audio_${i}`);
+  const slider = document.getElementById(`vol_${i}`);
+  if (audio) {
+    audio.muted = !audio.muted;
+    slider.value = audio.muted ? 0 : 0.8;
+  }
+}
+
+// Init
+renderEpisodes();
+</script>
+</body>
+</html>

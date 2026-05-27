@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Requests — Synaptic Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--cream:#F5F0E8;--crimson:#C41E3A;--gold:#C9913A;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-secondary:#3a5a72;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--r:12px;--r-lg:16px}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}a{text-decoration:none;color:inherit}
+.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:30px;height:30px}
+.brand-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--cream)}
+.brand-sub{font-size:8px;color:var(--steel);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.4)}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(107,154,184,0.07)}
+.hero-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);font-weight:900;color:var(--cream);margin-bottom:8px}
+.hero-sub{font-size:13px;color:rgba(245,240,232,0.5);max-width:520px;line-height:1.65}
+.main{padding:32px 40px 60px;max-width:680px;margin:0 auto;flex:1}
+.notice{background:rgba(0,49,83,0.05);border:1.5px solid rgba(107,154,184,0.25);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:24px;display:flex;gap:12px}
+.notice-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.notice-desc{font-size:12px;color:var(--text-secondary);line-height:1.6}
+label{display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:6px;margin-top:18px}
+input,select,textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--text-primary);background:var(--card);outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--steel);background:#fff}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.radio-opt{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 16px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-muted);transition:all .2s;background:var(--card)}
+.radio-opt:hover{border-color:var(--steel);color:var(--navy)}
+.radio-opt.selected{border-color:var(--navy);background:var(--navy);color:var(--cream)}
+.submit-btn{display:block;width:100%;background:var(--navy);color:var(--cream);border:none;padding:15px;border-radius:var(--r);font-size:14px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:28px;transition:background .2s;letter-spacing:.02em}
+.submit-btn:hover{background:var(--navy-mid)}
+.success{display:none;background:rgba(29,184,126,0.07);border:1.5px solid rgba(29,184,126,0.3);border-radius:var(--r-lg);padding:28px;text-align:center;margin-top:24px}
+.success-icon{font-size:40px;margin-bottom:12px}
+.success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.success-desc{font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:16px}
+.success-ref{font-size:11px;color:var(--text-muted);background:rgba(0,49,83,0.05);padding:8px 16px;border-radius:8px;display:inline-block}
+.footer{background:var(--navy);padding:14px 40px;display:flex;justify-content:space-between;margin-top:auto}
+.footer span{font-size:10.5px;color:rgba(245,240,232,0.25)}.footer strong{color:rgba(107,154,184,0.6)}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="14" stroke="rgba(107,154,184,0.3)" stroke-width="1"/><path d="M10 12 Q10 9 13 9 Q17 9 17 12 Q17 15 13 15.5 Q9 16 9 19 Q9 21 13 21 Q17 21 19 19" stroke="#6B9AB8" stroke-width="1.6" stroke-linecap="round" fill="none"/><circle cx="10" cy="12" r="1.4" fill="#C41E3A"/><circle cx="17" cy="12" r="1.1" fill="#6B9AB8"/><circle cx="13" cy="15.5" r="1.4" fill="#6B9AB8"/><circle cx="9" cy="19" r="1.1" fill="#6B9AB8"/><circle cx="19" cy="19" r="1.4" fill="#C41E3A"/></svg>
+    <div><div class="brand-name">Synaptic</div><div class="brand-sub">Learning Hub</div></div>
+  </div>
+  <a class="back-link" href="staff-hub.html">← Staff Hub</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">L&D Support</div>
+  <h1>Submit a Training Request</h1>
+  <p class="hero-sub">Have a learning need for your team? Tell us about it. We'll review and follow up within 2 business days — urgent regulatory requests within 24 hours.</p>
+</div>
+<div class="main">
+  <div class="notice">
+    <div style="font-size:20px;flex-shrink:0">🤝</div>
+    <div><div class="notice-title">Before you submit</div><div class="notice-desc">We'll help you find the right solution — not just build a course. Sometimes a conversation, a resource, or a team session works better. The more context you give us, the faster we can help.</div></div>
+  </div>
+
+  <div id="formView">
+    <label>Your name</label>
+    <input type="text" id="fname" placeholder="Full name">
+
+    <label>Your team / function</label>
+    <select id="fteam">
+      <option value="">Select your team...</option>
+      <option>Collections</option><option>ATC</option><option>Delivery</option>
+      <option>Finance</option><option>Risk</option><option>Technology</option>
+      <option>People</option><option>Marketing</option><option>Legal</option><option>Other</option>
+    </select>
+
+    <label>What's the learning need?</label>
+    <textarea id="fneed" placeholder="Describe the situation — what's happening, what's missing, what would change if people had this capability?"></textarea>
+
+    <label>Who is this for?</label>
+    <div class="radio-group" id="audienceGroup">
+      <div class="radio-opt" onclick="selectRadio(this,'audience','Just me')">Just me</div>
+      <div class="radio-opt" onclick="selectRadio(this,'audience','My team')">My team</div>
+      <div class="radio-opt" onclick="selectRadio(this,'audience','Cross-functional')">Cross-functional</div>
+      <div class="radio-opt" onclick="selectRadio(this,'audience','All staff')">All staff</div>
+    </div>
+
+    <label>How urgent is this?</label>
+    <div class="radio-group" id="urgencyGroup">
+      <div class="radio-opt" onclick="selectRadio(this,'urgency','Regulatory / audit — urgent')">🔴 Regulatory / audit</div>
+      <div class="radio-opt" onclick="selectRadio(this,'urgency','Within the next month')">🟡 Next month</div>
+      <div class="radio-opt" onclick="selectRadio(this,'urgency','No rush — planning ahead')">🟢 Planning ahead</div>
+    </div>
+
+    <label>Anything else we should know? <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+    <textarea id="fextra" placeholder="Preferred format, timing, specific facilitator requests, context that would help us..." style="min-height:70px"></textarea>
+
+    <button class="submit-btn" onclick="submitForm()">Submit training request →</button>
+  </div>
+
+  <div class="success" id="successView">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Request received</div>
+    <p class="success-desc">Thanks — we'll review your request and follow up within 2 business days. Urgent regulatory requests are reviewed within 24 hours.</p>
+    <div class="success-ref" id="refNum">Reference: SLH-2026-001</div>
+    <br><br>
+    <a href="staff-hub.html" style="font-size:13px;font-weight:700;color:var(--navy)">← Back to Staff Hub</a>
+  </div>
+</div>
+<footer class="footer">
+  <span>Synaptic Learning Hub · Training Requests · 2026</span>
+  <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
+</footer>
+<script>
+const radios={};
+function selectRadio(el,group,val){
+  document.querySelectorAll('#'+group+'Group .radio-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected'); radios[group]=val;
+}
+function submitForm(){
+  const name=document.getElementById('fname').value.trim();
+  const need=document.getElementById('fneed').value.trim();
+  if(!name||!need){alert('Please fill in your name and describe the learning need.');return;}
+  const ref='SLH-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*900)+100);
+  document.getElementById('refNum').textContent='Reference: '+ref;
+  document.getElementById('formView').style.display='none';
+  document.getElementById('successView').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

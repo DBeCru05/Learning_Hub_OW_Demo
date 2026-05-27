@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaming — Synaptic Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--steel-light:rgba(107,154,184,0.12);--cream:#F5F0E8;--gold:#C9913A;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--shadow-hover:0 12px 40px rgba(0,49,83,0.14);--r:12px;--r-lg:16px}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}a{text-decoration:none;color:inherit}
+.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:30px;height:30px}
+.brand-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--cream)}
+.brand-sub{font-size:8px;color:var(--steel);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.4)}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(107,154,184,0.07)}
+.hero-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);font-weight:900;color:var(--cream);margin-bottom:8px}
+.hero h1 span{color:var(--steel)}.hero-sub{font-size:13px;color:rgba(245,240,232,0.5);max-width:500px;line-height:1.65}
+.main{padding:32px 40px 60px;max-width:1100px;margin:0 auto}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px}
+.filter-btn{font-size:11px;font-weight:700;padding:6px 15px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.filter-btn:hover{border-color:var(--steel);color:var(--navy)}
+.filter-btn.active{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.act-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.act-grid{grid-template-columns:1fr}}
+.act-card{background:var(--card);border-radius:var(--r-lg);border:1.5px solid var(--border);padding:20px;box-shadow:var(--shadow-sm);transition:all .25s;cursor:pointer}
+.act-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);border-color:var(--steel)}
+.act-card.hidden{display:none}
+.act-icon{font-size:28px;margin-bottom:12px}
+.act-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.act-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;letter-spacing:.04em}
+.badge-topic-trust{background:rgba(107,154,184,0.12);color:var(--navy-mid)}
+.badge-topic-feedback{background:rgba(201,145,58,0.1);color:#7a4a00}
+.badge-topic-energy{background:rgba(29,184,126,0.1);color:#0a6644}
+.badge-topic-retro{background:rgba(107,53,196,0.1);color:#6B35C4}
+.badge-topic-collab{background:rgba(196,30,58,0.08);color:#8B0000}
+.badge-impact-high{background:rgba(196,30,58,0.07);color:#8B0000;border:1px solid rgba(196,30,58,0.15)}
+.badge-impact-med{background:rgba(201,145,58,0.08);color:#7a4a00;border:1px solid rgba(201,145,58,0.2)}
+.badge-impact-quick{background:rgba(29,184,126,0.08);color:#0a6644;border:1px solid rgba(29,184,126,0.2)}
+.act-title{font-size:14px;font-weight:800;color:var(--text-primary);margin-bottom:4px;letter-spacing:-.01em}
+.act-desc{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:12px}
+.act-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1.5px solid var(--border)}
+.act-time{font-size:10.5px;color:var(--text-muted)}
+.act-size{font-size:10.5px;color:var(--text-muted)}
+.footer{background:var(--navy);padding:14px 40px;display:flex;justify-content:space-between;margin-top:32px}
+.footer span{font-size:10.5px;color:rgba(245,240,232,0.25)}.footer strong{color:rgba(107,154,184,0.6)}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="14" stroke="rgba(107,154,184,0.3)" stroke-width="1"/><path d="M10 12 Q10 9 13 9 Q17 9 17 12 Q17 15 13 15.5 Q9 16 9 19 Q9 21 13 21 Q17 21 19 19" stroke="#6B9AB8" stroke-width="1.6" stroke-linecap="round" fill="none"/><circle cx="10" cy="12" r="1.4" fill="#C41E3A"/><circle cx="17" cy="12" r="1.1" fill="#6B9AB8"/><circle cx="13" cy="15.5" r="1.4" fill="#6B9AB8"/><circle cx="9" cy="19" r="1.1" fill="#6B9AB8"/><circle cx="19" cy="19" r="1.4" fill="#C41E3A"/></svg>
+    <div><div class="brand-name">Synaptic</div><div class="brand-sub">Learning Hub</div></div>
+  </div>
+  <a class="back-link" href="staff-hub.html">← Staff Hub</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Teams · Activations · Facilitation</div>
+  <h1>Teaming <span>& Collaboration</span></h1>
+  <p class="hero-sub">Plug-and-play activities for team meetings, workshops, and retrospectives. Classified by topic and impact so you always find the right one for the moment.</p>
+</div>
+<div class="main">
+  <div class="section-label">Filter Activities</div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="filter('all',this)">All activities</button>
+    <button class="filter-btn" onclick="filter('trust',this)">🤝 Trust</button>
+    <button class="filter-btn" onclick="filter('feedback',this)">💬 Feedback</button>
+    <button class="filter-btn" onclick="filter('energy',this)">⚡ Energy & Icebreaker</button>
+    <button class="filter-btn" onclick="filter('retro',this)">🔄 Retrospective</button>
+    <button class="filter-btn" onclick="filter('collab',this)">🧩 Collaboration</button>
+    <button class="filter-btn" onclick="filter('high',this)">🔴 High impact</button>
+    <button class="filter-btn" onclick="filter('quick',this)">🟢 Quick win</button>
+  </div>
+  <div class="act-grid" id="actGrid"></div>
+</div>
+<footer class="footer">
+  <span>Synaptic Learning Hub · Teaming · 2026</span>
+  <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
+</footer>
+<script>
+const ACTIVITIES=[
+  {icon:'🪞',title:'Start, Stop, Continue',desc:'Each person shares one thing the team should start doing, stop doing, and continue. Fast and honest.',topic:'retro',impact:'quick',time:'15 min',size:'Any size'},
+  {icon:'🗺️',title:'Working Styles Map',desc:'Team members place themselves on a 2x2 of communication style vs pace preference. Name the diversity before it becomes friction.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people'},
+  {icon:'🎯',title:'One Word Check-In',desc:'Each person says one word that describes how they\'re showing up today. No explanation required. Creates psychological safety fast.',topic:'energy',impact:'quick',time:'5 min',size:'Any size'},
+  {icon:'⭐',title:'Rose, Thorn, Bud',desc:'Structured reflection: what\'s working (rose), what\'s challenging (thorn), what\'s emerging (bud). Good for sprint retros or project check-ins.',topic:'retro',impact:'med',time:'20 min',size:'Any size'},
+  {icon:'🤝',title:'User Manual of Me',desc:'Each person shares their "user manual" — how they work best, what they need, what drains them. Builds trust and prevents assumptions.',topic:'trust',impact:'high',time:'45 min',size:'3–8 people'},
+  {icon:'💬',title:'Feedback Fishbowl',desc:'Two or three people have a structured feedback conversation while the rest observe. The outer circle shares observations after. Powerful for teams with low feedback culture.',topic:'feedback',impact:'high',time:'40 min',size:'6–15 people'},
+  {icon:'⚡',title:'Two Truths and a Lie',desc:'Classic icebreaker that reveals surprising things about people. Especially effective for cross-cultural or newly formed teams.',topic:'energy',impact:'quick',time:'10 min',size:'Any size'},
+  {icon:'🧩',title:'RACI Clarity Session',desc:'Walk through a shared project using RACI — Responsible, Accountable, Consulted, Informed. Surfaces hidden assumptions about who owns what.',topic:'collab',impact:'high',time:'45 min',size:'4–10 people'},
+  {icon:'🔄',title:'4Ls Retrospective',desc:'Liked, Learned, Lacked, Longed For. A richer retrospective format that captures both the analytical and emotional sides of a team experience.',topic:'retro',impact:'med',time:'25 min',size:'Any size'},
+  {icon:'💡',title:'Hot Takes',desc:'Each person shares their most controversial opinion about how the team works. A facilitator helps defuse and explore. Not for new teams.',topic:'feedback',impact:'high',time:'30 min',size:'4–8 people'},
+  {icon:'🌍',title:'Culture Moments',desc:'Share a moment when cultural differences created friction or learning. Based on the Culture Map framework. Opens conversations that usually stay silent.',topic:'trust',impact:'high',time:'30 min',size:'4–12 people'},
+  {icon:'🎲',title:'Random Pair Conversations',desc:'Random pairs spend 5 minutes answering one meaningful question together before the meeting starts. Breaks cliques, builds cross-functional relationships.',topic:'energy',impact:'quick',time:'10 min',size:'8+ people'},
+];
+function filter(f,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.act-card').forEach(c=>{
+    if(f==='all') c.classList.remove('hidden');
+    else if(f==='high'||f==='med'||f==='quick') c.classList.toggle('hidden',c.dataset.impact!==f);
+    else c.classList.toggle('hidden',c.dataset.topic!==f);
+  });
+}
+const grid=document.getElementById('actGrid');
+ACTIVITIES.forEach(a=>{
+  const impactBadge=a.impact==='high'?`<span class="act-badge badge-impact-high">🔴 High impact</span>`:a.impact==='med'?`<span class="act-badge badge-impact-med">🟡 Medium</span>`:`<span class="act-badge badge-impact-quick">🟢 Quick win</span>`;
+  const topicBadge=`<span class="act-badge badge-topic-${a.topic}">${{trust:'🤝 Trust',feedback:'💬 Feedback',energy:'⚡ Energy',retro:'🔄 Retro',collab:'🧩 Collab'}[a.topic]}</span>`;
+  const card=document.createElement('div');
+  card.className='act-card'; card.dataset.topic=a.topic; card.dataset.impact=a.impact;
+  card.innerHTML=`<div class="act-icon">${a.icon}</div><div class="act-badges">${topicBadge}${impactBadge}</div><div class="act-title">${a.title}</div><div class="act-desc">${a.desc}</div><div class="act-footer"><span class="act-time">⏱ ${a.time}</span><span class="act-size">👥 ${a.size}</span></div>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
