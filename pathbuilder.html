@@ -692,7 +692,8 @@ async function startGeneration(){
     document.getElementById('gen'+i).classList.add('active');
   }
   await delay(800);
-  try{ academy=await generateAcademy(); }catch(e){ academy=buildFallback(); }
+  // Use built-in academy generator (API not available from browser)
+  academy=buildFallback();
   buildAcademyUI();
   if(intake.commit==='long') saveProgress();
   showScreen('academy');
@@ -712,6 +713,68 @@ Respond ONLY with valid JSON (no markdown):
 
 function buildFallback(){
   const t=intake.topic, g=intake.goal;
+
+  // DEMO MODE: Rich pre-built academy for Effective Communication
+  if(t.toLowerCase().includes('effective communication') || t.toLowerCase().includes('communication')) {
+    return {
+      title: 'Effective Communication',
+      subtitle: 'A personalized path for your goal: "' + g + '"',
+      modules: [
+        {
+          title: 'Why Communication Breaks Down',
+          type: 'lesson',
+          eyebrow: 'Module 1 · Lesson',
+          description: 'Understanding the root causes of miscommunication at work',
+          content: {
+            intro: 'Most communication problems aren't about the words — they're about the gap between what you intend and what the other person hears. That gap is shaped by context, assumptions, emotional state, and the invisible filters we all carry.
+
+The research is clear: in professional settings, up to 70% of miscommunication happens not because of what was said, but because of what was assumed. The sender thinks they were clear. The receiver thought they understood. Both are wrong.
+
+Effective communication is a skill, not a personality trait. It can be learned, practiced, and improved — regardless of how naturally "good with words" you feel.',
+            concepts: [
+              { label: 'The Intention Gap', text: 'What you mean to say and what lands are two different things. High-context cultures read between the lines; low-context cultures expect everything explicit. Most conflict lives in this gap.' },
+              { label: 'Filters we all carry', text: 'Every message passes through the receiver's history, mood, assumptions, and relationship with you. You can't control their filters — but you can account for them.' },
+              { label: 'The medium matters', text: 'Slack is not the right place for feedback. Email is not the right place for conflict. Choosing the right channel is half the communication decision.' },
+              { label: 'Clarity is an act of respect', text: 'Vague communication forces the other person to fill in the blanks — usually with worst-case assumptions. Being specific is a form of care.' }
+            ]
+          }
+        },
+        {
+          title: 'Knowledge Check',
+          type: 'quiz',
+          eyebrow: 'Module 2 · Knowledge Check',
+          description: 'Test your understanding before moving to practice',
+          content: {
+            question: 'A colleague sends you a Slack message: "Can we talk?" with no context. What is the most effective response?',
+            options: [
+              { text: 'Immediately assume something is wrong and start worrying', correct: false },
+              { text: 'Reply with "Sure — what's it about and when works for you?" to get context before committing', correct: true },
+              { text: 'Say yes without asking for context so you don't seem difficult', correct: false },
+              { text: 'Ignore it until they follow up with more detail', correct: false }
+            ],
+            feedbackCorrect: 'Exactly right. Asking for context isn't defensive — it's efficient. It lets you show up prepared and prevents the other person from sitting with unnecessary anxiety about your reaction.',
+            feedbackWrong: 'The goal is to reduce uncertainty for both people. Asking "what's it about?" before agreeing to a meeting is a mark of good communication, not avoidance.'
+          }
+        },
+        {
+          title: 'Real-World Scenario',
+          type: 'scenario',
+          eyebrow: 'Module 3 · Scenario',
+          description: 'Apply your thinking to a realistic workplace situation',
+          content: {
+            scene: 'You've just finished presenting a proposal to your team. Your manager says "interesting approach" and moves on without further comment. Three days later you find out they've decided to go in a different direction — without telling you.',
+            question: 'What was the communication failure, and what would you do differently next time?',
+            options: [
+              { text: 'Your manager was unclear — there's nothing you could have done differently', correct: false, feedback: 'While your manager could have been clearer, effective communicators don't wait for clarity — they create it. "Interesting approach" is a signal worth following up on.' },
+              { text: 'After the meeting, you could have asked directly: "How are you feeling about the direction? Any concerns I should think through?" — creating space for honest feedback', correct: true, feedback: 'This is exactly right. Closing the loop after a presentation is a communication habit that prevents exactly this scenario. One direct question would have surfaced the concern.' },
+              { text: 'Send a follow-up email summarizing the proposal and asking for written approval', correct: false, feedback: 'Documentation is useful but this doesn't address the real issue — the lack of a genuine feedback conversation after the presentation.' }
+            ]
+          }
+        }
+      ]
+    };
+  }
+
   const mods=[
     {title:'Understanding the foundations',type:'lesson',eyebrow:'Module 1 · Lesson',description:'Core concepts behind '+t,content:{
       intro:`${t} is one of those skills that looks simple from the outside but has real layers worth understanding. Once you have the right mental model, application becomes much more intuitive.\n\nThe key insight most people miss: this is less about following a script and more about developing judgment — knowing when to apply which approach based on context.\n\nLet's build that mental model. By the end of this module, you'll have a framework you can apply immediately.`,
@@ -786,6 +849,7 @@ function buildAcademyUI(){
 }
 
 function renderModule(idx){
+  try {
   currentMod=idx; answeredQuiz=false;
   const mod=academy.modules[idx];
   document.querySelectorAll('.mod-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
@@ -795,10 +859,17 @@ function renderModule(idx){
   else if(mod.type==='quiz') html+=renderQuiz(mod.content,idx);
   else if(mod.type==='scenario') html+=renderScenario(mod.content,idx);
   const isLast=idx===academy.modules.length-1;
-  html+=`<div class="mod-nav">${idx>0?`<button class="mod-nav-btn btn-prev" onclick="renderModule(${idx-1})">← Previous</button>`:'<span></span>'}<button class="mod-nav-btn btn-next" id="modNextBtn" onclick="${isLast?'finishAcademy()':'advanceMod('+idx+')'}" ${mod.type!=='lesson'?'disabled':''}>${isLast?'🎓 Complete path':'Next module →'}</button></div>`;
+  const prevBtn = idx>0 ? '<button class="mod-nav-btn btn-prev" onclick="renderModule('+(idx-1)+')">← Previous</button>' : '<span></span>';
+  const nextClick = isLast ? 'finishAcademy()' : 'advanceMod('+idx+')';
+  const nextLabel = isLast ? '🎓 Complete path' : 'Next module →';
+  const nextDisabled = mod.type!=='lesson' ? 'disabled' : '';
+  html += '<div class="mod-nav">'+prevBtn+'<button class="mod-nav-btn btn-next" id="modNextBtn" onclick="'+nextClick+'" '+nextDisabled+'>'+nextLabel+'</button></div>';
   main.innerHTML=html; main.scrollTop=0;
   if(mod.type==='lesson') enableNext();
   if(intake.commit==='long') saveProgress();
+  } catch(err) {
+    document.getElementById('academyMain').innerHTML = '<div style="padding:32px;color:#6B9AB8;font-size:13px;line-height:1.8"><strong style="color:#F5F0E8;display:block;margin-bottom:8px">Loading module...</strong>Error: '+err.message+'<br><br><button onclick="renderModule('+0+')" style="background:#003153;color:#F5F0E8;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:DM Sans,sans-serif;font-weight:700">Reload module</button></div>';
+  }
 }
 
 function renderLesson(c){

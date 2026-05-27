@@ -283,6 +283,15 @@ async function sendMessage(text) {
   const userText = text || input.value.trim();
   if (!userText) return;
 
+  // Check misuse FIRST — before showing message in chat
+  const flagged = checkMisuse(userText);
+  if (flagged) {
+    input.value = '';
+    input.style.height = 'auto';
+    appendMisuse(flagged);
+    return;
+  }
+
   document.getElementById('suggestions').style.display = 'none';
   appendMsg('user', userText);
   input.value = '';
@@ -293,26 +302,12 @@ async function sendMessage(text) {
   typing.classList.add('show');
   scrollBottom();
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM,
-        messages: history.map(m => ({ role: m.role, content: m.content }))
-      })
-    });
-    const data = await res.json();
-    const reply = data.content?.[0]?.text || simulateReply(userText);
-    typing.classList.remove('show');
-    appendMsg('bot', reply);
-    history.push({ role: 'assistant', content: reply });
-  } catch(e) {
-    typing.classList.remove('show');
-    appendMsg('bot', simulateReply(userText));
-  }
+  // Simulate realistic thinking delay
+  await new Promise(r => setTimeout(r, 900 + Math.random() * 600));
+  const reply = simulateReply(userText);
+  typing.classList.remove('show');
+  appendMsg('bot', reply);
+  history.push({ role: 'assistant', content: reply });
   scrollBottom();
 }
 
@@ -341,11 +336,6 @@ function checkMisuse(text) {
 }
 
 function appendMisuse(type) {
-  // Remove the flagged message from history so it's not sent
-  history.pop();
-  // Clear the input so they can retype
-  document.getElementById('chat-input').value = '';
-  // Show modal
   document.getElementById('misuseOverlay').classList.add('show');
 }
 
@@ -356,6 +346,21 @@ function closeMisuseModal() {
 
 function simulateReply(userText) {
   const lower = userText.toLowerCase();
+
+  // ── DEMO CONVERSATION FLOW ──
+  // Turn 1: feedback to manager
+  if (lower.includes('feedback') && (lower.includes('manager') || lower.includes('boss'))) {
+    return "That's one of the most important — and most avoided — conversations at work. Before we think about the words, tell me: what's the specific behavior you want your manager to change? Not the feeling it creates, but the actual thing they do or don't do.";
+  }
+  // Turn 2: follow-up about objectives / clarity
+  if (lower.includes('objective') || lower.includes('goal') || lower.includes('clear') || lower.includes('clarity') || lower.includes('direction') || lower.includes('expectation')) {
+    return "That's a really common pain point — and it's worth separating two things: does your manager not know what clear looks like, or do they know and just not communicate it to you? Those are different problems with different solutions. Which one feels closer to your situation?";
+  }
+  // Turn 3: follow-up on unclear goals
+  if (lower.includes('both') || lower.includes('not sure') || lower.includes('don't know') || lower.includes('unsure') || lower.includes('hard to tell')) {
+    return "Then the most useful thing you can do before that conversation is bring a concrete example — a moment when you needed clarity and didn't get it, and what it cost you. That makes it specific and actionable instead of a general complaint. Does a specific moment come to mind?";
+  }
+  // Emotions
   if (lower.includes('confused') || lower.includes('confus')) {
     return "Confusion is usually a signal that something doesn't have enough context yet. What's the part you're most unclear about — the situation itself, or what you should do next?";
   }
@@ -363,19 +368,17 @@ function simulateReply(userText) {
     return "Frustration usually means something important to you isn't being honored. What's the thing you feel isn't being seen or taken seriously right now?";
   }
   if (lower.includes('anxious') || lower.includes('nervous') || lower.includes('worried') || lower.includes('stress')) {
-    return "That makes sense given what you're navigating. When you sit with the anxiety for a moment — what's the specific thing you're most afraid might happen?";
+    return "That makes sense given what you're navigating. When you sit with it for a moment — what's the specific thing you're most afraid might happen?";
   }
   if (lower.includes('tired') || lower.includes('exhaust') || lower.includes('burnout') || lower.includes('overwhelm')) {
     return "That kind of tiredness usually means something in the current setup isn't sustainable. Is it the volume of work, or more about what the work actually is?";
   }
+  // Topics
   if (lower.includes('manager') || lower.includes('boss') || lower.includes('1:1')) {
     return "It sounds like there's some tension there. Before we think about how to approach the conversation — what outcome would you actually want to walk away with from that talk?";
   }
   if (lower.includes('stuck') || lower.includes('bored') || lower.includes('plateau')) {
     return "That feeling of being stuck usually means something shifted — either in you or in the role. When did you last feel genuinely energized by what you were working on?";
-  }
-  if (lower.includes('feedback') || lower.includes('review') || lower.includes('performance')) {
-    return "Feedback conversations are tricky because we often go in with the message we want to deliver instead of the outcome we want to create. What do you want this person to actually do differently after the conversation?";
   }
   if (lower.includes('next step') || lower.includes('career') || lower.includes('grow') || lower.includes('promot')) {
     return "That's worth exploring carefully. When you imagine yourself a year from now in a role that feels right — what does your day-to-day look like, specifically?";
@@ -452,6 +455,7 @@ function restartChat() {
     <div class="misuse-sub">This is a safe space for genuine professional reflection. Language that demeans, disrespects, or attacks others isn't something this tool can engage with.</div>
     <div class="misuse-conduct">Synaptic Code of Conduct · Respectful Communication</div>
     <button class="misuse-btn" onclick="closeMisuseModal()">I understand — let me rephrase →</button>
+    <p style="font-size:10px;color:#aaa;margin-top:14px;line-height:1.6;">⚠️ Serious cases that incur into our Code of Conduct will be reported directly to HR.</p>
   </div>
 </div>
 </body>
