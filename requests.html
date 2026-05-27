@@ -3,39 +3,102 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Training Requests — Synaptic Learning Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--cream:#F5F0E8;--crimson:#C41E3A;--gold:#C9913A;--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-secondary:#3a5a72;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--r:12px;--r-lg:16px}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}a{text-decoration:none;color:inherit}
-.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between}
+:root{--navy:#003153;--navy-mid:#0a4a6e;--steel:#6B9AB8;--steel-light:rgba(107,154,184,0.12);--cream:#F5F0E8;--gold:#C9913A;--gold-light:rgba(201,145,58,0.1);--bg:#F5F0E8;--card:#fff;--text-primary:#003153;--text-secondary:#3a5a72;--text-muted:#7a9ab0;--border:rgba(0,49,83,0.1);--border-mid:rgba(0,49,83,0.18);--shadow-sm:0 2px 12px rgba(0,49,83,0.07);--r:10px;--r-lg:14px;--green:#1DB87E;--green-light:rgba(29,184,126,0.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}
+.topbar{background:var(--navy);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .brand{display:flex;align-items:center;gap:10px}.brand-mark{width:30px;height:30px}
 .brand-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--cream)}
 .brand-sub{font-size:8px;color:var(--steel);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
 .back-link{font-size:11px;font-weight:600;color:rgba(245,240,232,0.4)}
-.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:40px;position:relative;overflow:hidden}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:40px 40px 44px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(107,154,184,0.07)}
 .hero-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);font-weight:900;color:var(--cream);margin-bottom:8px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,36px);font-weight:900;color:var(--cream);margin-bottom:6px}
 .hero-sub{font-size:13px;color:rgba(245,240,232,0.5);max-width:520px;line-height:1.65}
-.main{padding:32px 40px 60px;max-width:680px;margin:0 auto;flex:1}
-.notice{background:rgba(0,49,83,0.05);border:1.5px solid rgba(107,154,184,0.25);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:24px;display:flex;gap:12px}
-.notice-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
-.notice-desc{font-size:12px;color:var(--text-secondary);line-height:1.6}
-label{display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:6px;margin-top:18px}
-input,select,textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--text-primary);background:var(--card);outline:none;transition:border-color .2s}
-input:focus,select:focus,textarea:focus{border-color:var(--steel);background:#fff}
-textarea{resize:vertical;min-height:90px;line-height:1.6}
-.radio-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.radio-opt{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 16px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-muted);transition:all .2s;background:var(--card)}
-.radio-opt:hover{border-color:var(--steel);color:var(--navy)}
-.radio-opt.selected{border-color:var(--navy);background:var(--navy);color:var(--cream)}
-.submit-btn{display:block;width:100%;background:var(--navy);color:var(--cream);border:none;padding:15px;border-radius:var(--r);font-size:14px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:28px;transition:background .2s;letter-spacing:.02em}
-.submit-btn:hover{background:var(--navy-mid)}
-.success{display:none;background:rgba(29,184,126,0.07);border:1.5px solid rgba(29,184,126,0.3);border-radius:var(--r-lg);padding:28px;text-align:center;margin-top:24px}
-.success-icon{font-size:40px;margin-bottom:12px}
-.success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px}
-.success-desc{font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:16px}
-.success-ref{font-size:11px;color:var(--text-muted);background:rgba(0,49,83,0.05);padding:8px 16px;border-radius:8px;display:inline-block}
+.form-wrap{max-width:660px;margin:0 auto;padding:32px 24px 60px}
+
+/* PROGRESS */
+.progress-bar{display:flex;align-items:center;margin-bottom:28px}
+.prog-step{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--text-muted)}
+.prog-step.active{color:var(--text-primary)}
+.prog-step.done{color:var(--green)}
+.prog-dot{width:24px;height:24px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;transition:all .2s}
+.prog-step.active .prog-dot{background:var(--navy);color:#fff}
+.prog-step.done .prog-dot{background:var(--green);color:#fff}
+.prog-line{flex:1;height:2px;background:var(--border);margin:0 5px;transition:background .2s}
+.prog-line.done{background:var(--green)}
+
+/* SECTIONS */
+.section{display:none;background:var(--card);border-radius:var(--r-lg);padding:28px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
+.section.active{display:block}
+.sec-eyebrow{font-size:9.5px;font-weight:700;color:var(--steel);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.sec-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:5px}
+.sec-sub{font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:22px}
+
+/* FIELDS */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--text-primary);margin-bottom:5px}
+.field label .req{color:var(--steel)}
+.field input,.field textarea,.field select{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-primary);background:#fff;outline:none;transition:border-color .15s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--steel)}
+.field textarea{resize:vertical;min-height:88px;line-height:1.6}
+.helper{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s}
+.opt:hover{border-color:rgba(107,154,184,0.4);background:var(--steel-light)}
+.opt.selected{border-color:var(--navy);background:rgba(0,49,83,0.04)}
+.opt input[type=radio]{margin-top:2px;accent-color:var(--navy);flex-shrink:0}
+.opt-label{font-size:13px;font-weight:700;color:var(--text-primary);display:block;margin-bottom:1px}
+.opt-sub{font-size:11px;color:var(--text-muted)}
+
+/* INLINE MESSAGES */
+.inline-msg{border-radius:var(--r-lg);padding:13px 15px;margin-bottom:18px;display:none}
+.inline-msg.show{display:block}
+.msg-green{background:var(--green-light);border-left:3px solid var(--green)}
+.msg-amber{background:var(--gold-light);border-left:3px solid var(--gold)}
+.msg-red{background:rgba(196,30,58,0.05);border-left:3px solid #C41E3A}
+.msg-title{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+.msg-body{font-size:12px;color:var(--text-secondary);line-height:1.6}
+
+/* BUTTONS */
+.btn-row{display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding-top:18px;border-top:1.5px solid var(--border)}
+.btn-next{background:var(--navy);color:white;border:none;padding:11px 26px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-next:hover{background:var(--navy-mid)}
+.btn-back{background:transparent;color:var(--text-muted);border:none;padding:11px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-back:hover{color:var(--text-primary)}
+.btn-submit{background:var(--navy);color:#fff;border:none;padding:11px 26px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-submit:hover{background:var(--navy-mid)}
+
+/* REDIRECT */
+.redirect-screen{display:none;background:var(--card);border-radius:var(--r-lg);padding:28px;border:1.5px solid var(--border);text-align:center;box-shadow:var(--shadow-sm)}
+.redirect-screen.show{display:block}
+.alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0;text-align:left}
+@media(max-width:480px){.alt-grid{grid-template-columns:1fr}}
+.alt-card{background:var(--bg);border-radius:var(--r);padding:13px;border:1.5px solid var(--border)}
+.alt-icon{font-size:19px;margin-bottom:6px}
+.alt-title{font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+.alt-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+.btn-restart{background:var(--bg);color:var(--text-primary);border:1.5px solid var(--border);padding:9px 18px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* CONFIRM */
+.confirm-screen{display:none;background:var(--card);border-radius:var(--r-lg);padding:36px 28px;border:2px solid var(--steel);text-align:center;box-shadow:var(--shadow-sm)}
+.confirm-screen.show{display:block}
+.confirm-ref{display:inline-block;background:var(--steel-light);color:var(--navy);font-size:12px;font-weight:800;padding:5px 16px;border-radius:20px;margin-bottom:20px;letter-spacing:.04em;border:1px solid rgba(107,154,184,0.3)}
+.confirm-details{background:var(--bg);border-radius:var(--r);padding:14px 18px;margin-bottom:22px;text-align:left}
+.cdr{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.cdr:last-child{border-bottom:none}
+.cdr-label{color:var(--text-muted);font-weight:700;min-width:90px}
+.cdr-val{color:var(--text-primary);font-weight:600}
+.btn-home{background:var(--navy);color:white;border:none;padding:11px 26px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block}
+
 .footer{background:var(--navy);padding:14px 40px;display:flex;justify-content:space-between;margin-top:auto}
 .footer span{font-size:10.5px;color:rgba(245,240,232,0.25)}.footer strong{color:rgba(107,154,184,0.6)}
 </style>
@@ -51,79 +114,301 @@ textarea{resize:vertical;min-height:90px;line-height:1.6}
 <div class="hero">
   <div class="hero-eyebrow">L&D Support</div>
   <h1>Submit a Training Request</h1>
-  <p class="hero-sub">Have a learning need for your team? Tell us about it. We'll review and follow up within 2 business days — urgent regulatory requests within 24 hours.</p>
+  <p class="hero-sub">Have a learning need for your team? Tell us about it. We'll review your request and follow up within 2 business days — urgent regulatory requests within 24 hours.</p>
 </div>
-<div class="main">
-  <div class="notice">
-    <div style="font-size:20px;flex-shrink:0">🤝</div>
-    <div><div class="notice-title">Before you submit</div><div class="notice-desc">We'll help you find the right solution — not just build a course. Sometimes a conversation, a resource, or a team session works better. The more context you give us, the faster we can help.</div></div>
+
+<div class="form-wrap">
+  <div class="progress-bar" id="progress-bar">
+    <div class="prog-step active" id="prog-1"><div class="prog-dot">1</div><span>Situation</span></div>
+    <div class="prog-line" id="pline-1"></div>
+    <div class="prog-step" id="prog-2"><div class="prog-dot">2</div><span>Type</span></div>
+    <div class="prog-line" id="pline-2"></div>
+    <div class="prog-step" id="prog-3"><div class="prog-dot">3</div><span>Audience</span></div>
+    <div class="prog-line" id="pline-3"></div>
+    <div class="prog-step" id="prog-4"><div class="prog-dot">4</div><span>Goals</span></div>
+    <div class="prog-line" id="pline-4"></div>
+    <div class="prog-step" id="prog-5"><div class="prog-dot">5</div><span>Details</span></div>
+    <div class="prog-line" id="pline-5"></div>
+    <div class="prog-step" id="prog-6"><div class="prog-dot">6</div><span>Submit</span></div>
   </div>
 
-  <div id="formView">
-    <label>Your name</label>
-    <input type="text" id="fname" placeholder="Full name">
-
-    <label>Your team / function</label>
-    <select id="fteam">
-      <option value="">Select your team...</option>
-      <option>Collections</option><option>ATC</option><option>Delivery</option>
-      <option>Finance</option><option>Risk</option><option>Technology</option>
-      <option>People</option><option>Marketing</option><option>Legal</option><option>Other</option>
-    </select>
-
-    <label>What's the learning need?</label>
-    <textarea id="fneed" placeholder="Describe the situation — what's happening, what's missing, what would change if people had this capability?"></textarea>
-
-    <label>Who is this for?</label>
-    <div class="radio-group" id="audienceGroup">
-      <div class="radio-opt" onclick="selectRadio(this,'audience','Just me')">Just me</div>
-      <div class="radio-opt" onclick="selectRadio(this,'audience','My team')">My team</div>
-      <div class="radio-opt" onclick="selectRadio(this,'audience','Cross-functional')">Cross-functional</div>
-      <div class="radio-opt" onclick="selectRadio(this,'audience','All staff')">All staff</div>
+  <!-- S1: SITUATION -->
+  <div class="section active" id="sec-1">
+    <div class="sec-eyebrow">Step 1 of 6</div>
+    <div class="sec-title">Tell us about the situation</div>
+    <div class="sec-sub">Help us understand what's going on before we jump to solutions.</div>
+    <div class="field-row">
+      <div class="field"><label>Your name <span class="req">*</span></label><input type="text" id="f-name" placeholder="Full name"></div>
+      <div class="field"><label>Your team <span class="req">*</span></label><input type="text" id="f-team" placeholder="e.g. Risk, Finance, CX"></div>
     </div>
-
-    <label>How urgent is this?</label>
-    <div class="radio-group" id="urgencyGroup">
-      <div class="radio-opt" onclick="selectRadio(this,'urgency','Regulatory / audit — urgent')">🔴 Regulatory / audit</div>
-      <div class="radio-opt" onclick="selectRadio(this,'urgency','Within the next month')">🟡 Next month</div>
-      <div class="radio-opt" onclick="selectRadio(this,'urgency','No rush — planning ahead')">🟢 Planning ahead</div>
+    <div class="field-row">
+      <div class="field"><label>Your role <span class="req">*</span></label><input type="text" id="f-role" placeholder="Job title"></div>
+      <div class="field"><label>Executive sponsor <span class="req">*</span></label><input type="text" id="f-sponsor" placeholder="Who is backing this need?"></div>
     </div>
-
-    <label>Anything else we should know? <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
-    <textarea id="fextra" placeholder="Preferred format, timing, specific facilitator requests, context that would help us..." style="min-height:70px"></textarea>
-
-    <button class="submit-btn" onclick="submitForm()">Submit training request →</button>
+    <div class="field">
+      <label>What best describes your situation? <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="situation" value="gap"><div class="opt-text"><span class="opt-label">There's a skill or knowledge gap</span><span class="opt-sub">People don't know how to do something they need to do</span></div></label>
+        <label class="opt"><input type="radio" name="situation" value="onboarding"><div class="opt-text"><span class="opt-label">New hires or role changes</span><span class="opt-sub">People need to get up to speed quickly</span></div></label>
+        <label class="opt"><input type="radio" name="situation" value="notapplying"><div class="opt-text"><span class="opt-label">People know it but aren't doing it</span><span class="opt-sub">A behaviour or process that isn't being followed</span></div></label>
+        <label class="opt"><input type="radio" name="situation" value="reference"><div class="opt-text"><span class="opt-label">People need a reference or job aid</span><span class="opt-sub">Something they can look up in the moment, not a course</span></div></label>
+        <label class="opt"><input type="radio" name="situation" value="unsure"><div class="opt-text"><span class="opt-label">I'm not sure yet</span><span class="opt-sub">I have a feeling there's a need but I'd like to think it through with L&D</span></div></label>
+      </div>
+    </div>
+    <div class="btn-row"><div></div><button class="btn-next" onclick="nextFromS1()">Next →</button></div>
   </div>
 
-  <div class="success" id="successView">
-    <div class="success-icon">✅</div>
-    <div class="success-title">Request received</div>
-    <p class="success-desc">Thanks — we'll review your request and follow up within 2 business days. Urgent regulatory requests are reviewed within 24 hours.</p>
-    <div class="success-ref" id="refNum">Reference: SLH-2026-001</div>
-    <br><br>
-    <a href="staff-hub.html" style="font-size:13px;font-weight:700;color:var(--navy)">← Back to Staff Hub</a>
+  <!-- S1b: NOT APPLYING -->
+  <div class="section" id="sec-1b">
+    <div class="sec-eyebrow">Step 1b of 6</div>
+    <div class="sec-title">Why aren't people applying it?</div>
+    <div class="sec-sub">Understanding the root cause changes the right solution.</div>
+    <div class="field">
+      <label>What's behind the gap? <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="gap" value="reminder"><div class="opt-text"><span class="opt-label">They may have forgotten — it's been a while</span><span class="opt-sub">A refresher or reminder might be enough</span></div></label>
+        <label class="opt"><input type="radio" name="gap" value="unclear"><div class="opt-text"><span class="opt-label">The expectation was never completely clear</span><span class="opt-sub">People weren't told explicitly what was expected</span></div></label>
+        <label class="opt"><input type="radio" name="gap" value="enforcement"><div class="opt-text"><span class="opt-label">No one was held accountable</span><span class="opt-sub">The consequence for not doing it hasn't been enforced</span></div></label>
+        <label class="opt"><input type="radio" name="gap" value="nodoc"><div class="opt-text"><span class="opt-label">The process isn't documented or accessible</span><span class="opt-sub">There's nothing to refer back to</span></div></label>
+        <label class="opt"><input type="radio" name="gap" value="unsure"><div class="opt-text"><span class="opt-label">I'm not sure</span><span class="opt-sub">I need help diagnosing the root cause</span></div></label>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-1')">← Back</button><button class="btn-next" onclick="nextFromS1b()">Next →</button></div>
+  </div>
+
+  <!-- S2: TYPE -->
+  <div class="section" id="sec-2">
+    <div class="sec-eyebrow">Step 2 of 6</div>
+    <div class="sec-title">What type of learning need is this?</div>
+    <div class="sec-sub">This helps us match the right format and process.</div>
+    <div class="field">
+      <label>Learning type <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="ltype" value="mandatory"><div class="opt-text"><span class="opt-label">Mandatory / compliance training</span><span class="opt-sub">All-staff or regulatory requirement</span></div></label>
+        <label class="opt"><input type="radio" name="ltype" value="technical"><div class="opt-text"><span class="opt-label">Technical or role-specific skill</span><span class="opt-sub">A skill specific to a team, role, or function</span></div></label>
+        <label class="opt"><input type="radio" name="ltype" value="soft"><div class="opt-text"><span class="opt-label">Soft skills / leadership / teaming</span><span class="opt-sub">Communication, feedback, collaboration, management</span></div></label>
+        <label class="opt"><input type="radio" name="ltype" value="selfservice"><div class="opt-text"><span class="opt-label">Self-service resource or guide</span><span class="opt-sub">A document, template, or job aid people can access themselves</span></div></label>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-1')">← Back</button><button class="btn-next" onclick="nextFromS2()">Next →</button></div>
+  </div>
+
+  <!-- S2b: MANDATORY VALIDATION -->
+  <div class="section" id="sec-2b">
+    <div class="sec-eyebrow">Step 2b of 6</div>
+    <div class="sec-title">Let's validate the mandatory training need</div>
+    <div class="sec-sub">Mandatory all-staff training is high-cost and high-disruption. Let's make sure it's the right solution.</div>
+    <div class="field">
+      <label>Which regulator or body requires this? <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="regulator" value="cnbv"><div class="opt-text"><span class="opt-label">CNBV</span><span class="opt-sub">Comisión Nacional Bancaria y de Valores</span></div></label>
+        <label class="opt"><input type="radio" name="regulator" value="banxico"><div class="opt-text"><span class="opt-label">BANXICO</span><span class="opt-sub">Banco de México</span></div></label>
+        <label class="opt"><input type="radio" name="regulator" value="audit"><div class="opt-text"><span class="opt-label">Internal audit</span><span class="opt-sub">Finding from internal audit team</span></div></label>
+        <label class="opt"><input type="radio" name="regulator" value="none"><div class="opt-text"><span class="opt-label">No specific regulator</span><span class="opt-sub">It's important but not externally required</span></div></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>What is the origin of this audit finding? <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="auditorigin" value="finding"><div class="opt-text"><span class="opt-label">Active finding — documented and time-bound</span><span class="opt-sub">There is a formal finding with a deadline</span></div></label>
+        <label class="opt"><input type="radio" name="auditorigin" value="preventive"><div class="opt-text"><span class="opt-label">Preventive — no finding yet</span><span class="opt-sub">We want to get ahead of a potential issue</span></div></label>
+        <label class="opt"><input type="radio" name="auditorigin" value="unsure"><div class="opt-text"><span class="opt-label">Not sure</span><span class="opt-sub">I need to check with compliance</span></div></label>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-2')">← Back</button><button class="btn-next" onclick="nextFromS2b()">Next →</button></div>
+  </div>
+
+  <!-- S3: AUDIENCE -->
+  <div class="section" id="sec-3">
+    <div class="sec-eyebrow">Step 3 of 6</div>
+    <div class="sec-title">Who is this for?</div>
+    <div class="sec-sub">The more specific the audience, the better the solution.</div>
+    <div class="field"><label>Describe the audience <span class="req">*</span></label><input type="text" id="f-audience" placeholder="e.g. All risk analysts, New hires in finance, Senior managers Mexico"><div class="helper">Be as specific as possible — role, level, area, location.</div></div>
+    <div class="field-row">
+      <div class="field"><label>Approximate headcount <span class="req">*</span></label><input type="text" id="f-headcount" placeholder="e.g. 40, ~200"></div>
+      <div class="field"><label>Audience familiarity</label><select id="f-familiarity"><option value="">Select...</option><option value="none">No prior knowledge</option><option value="some">Some familiarity</option><option value="experienced">Mostly experienced</option><option value="mixed">Mixed levels</option></select></div>
+    </div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-2')">← Back</button><button class="btn-next" onclick="nextFromS3()">Next →</button></div>
+  </div>
+
+  <!-- S4: GOALS -->
+  <div class="section" id="sec-4">
+    <div class="sec-eyebrow">Step 4 of 6</div>
+    <div class="sec-title">What does success look like?</div>
+    <div class="sec-sub">These questions help us design something that actually works — not just a course that gets completed.</div>
+    <div class="field"><label>What problem are we solving? <span class="req">*</span></label><textarea id="f-problem" placeholder="Describe the current state. What's not working, missing, or at risk?"></textarea></div>
+    <div class="field"><label>What should people be able to do after? <span class="req">*</span></label><textarea id="f-outcome" placeholder="Be specific and behavioural. Not 'understand X' but 'be able to do X in Y situation'."></textarea></div>
+    <div class="field"><label>How will we know it worked?</label><input type="text" id="f-measure" placeholder="e.g. Audit finding closed, error rate drops, manager observes changed behaviour"><div class="helper">Optional, but very useful.</div></div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-3')">← Back</button><button class="btn-next" onclick="nextFromS4()">Next →</button></div>
+  </div>
+
+  <!-- S5: DETAILS -->
+  <div class="section" id="sec-5">
+    <div class="sec-eyebrow">Step 5 of 6</div>
+    <div class="sec-title">A few more details</div>
+    <div class="sec-sub">Almost there. This helps us prioritise and plan.</div>
+    <div class="field"><label>Urgency <span class="req">*</span></label><select id="f-urgency"><option value="">Select...</option><option value="regulatory">Regulatory / audit deadline (non-negotiable)</option><option value="business">Business deadline (important but flexible)</option><option value="flexible">Flexible — within the next quarter</option><option value="unsure">Not sure</option></select></div>
+    <div class="field"><label>Preferred delivery date</label><input type="date" id="f-date"><div class="helper">Leave blank if flexible.</div></div>
+    <div class="field"><label>Do you have existing materials? <span class="req">*</span></label><select id="f-materials"><option value="">Select...</option><option value="yes">Yes — we have content ready</option><option value="partial">Partial — some content exists</option><option value="no">No — starting from scratch</option></select></div>
+    <div class="field"><label>Who is the content owner? <span class="req">*</span></label><input type="text" id="f-owner" placeholder="Who will review and approve the learning content?"></div>
+    <div class="field"><label>Is there a budget allocated?</label><select id="f-budget"><option value="">Select...</option><option value="yes">Yes</option><option value="no">No</option><option value="tbd">TBD</option></select></div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-4')">← Back</button><button class="btn-next" onclick="nextFromS5()">Review →</button></div>
+  </div>
+
+  <!-- S6: SUBMIT -->
+  <div class="section" id="sec-6">
+    <div class="sec-eyebrow">Step 6 of 6</div>
+    <div class="sec-title">Ready to submit</div>
+    <div class="sec-sub">One last thing — how would you like us to follow up?</div>
+    <div class="field">
+      <label>Preferred follow-up <span class="req">*</span></label>
+      <div class="options">
+        <label class="opt"><input type="radio" name="followup" value="async"><div class="opt-text"><span class="opt-label">Async response by email / Slack</span><span class="opt-sub">You'll hear from us within 2 business days</span></div></label>
+        <label class="opt"><input type="radio" name="followup" value="call"><div class="opt-text"><span class="opt-label">Discovery call with L&D</span><span class="opt-sub">30-minute conversation to align on the best solution</span></div></label>
+        <label class="opt"><input type="radio" name="followup" value="urgent"><div class="opt-text"><span class="opt-label">Urgent — I need a response within 24 hours</span><span class="opt-sub">For regulatory deadlines only</span></div></label>
+      </div>
+    </div>
+    <div class="field"><label>Anything else we should know?</label><textarea id="f-notes" placeholder="Context, constraints, previous attempts, or anything that would help us..."></textarea></div>
+    <div class="btn-row"><button class="btn-back" onclick="goTo('sec-5')">← Back</button><button class="btn-submit" onclick="submitForm()">Submit request ✓</button></div>
+  </div>
+
+  <!-- REDIRECT -->
+  <div class="redirect-screen" id="redirect-screen">
+    <div style="font-size:40px;margin-bottom:12px" id="redirect-icon">🔍</div>
+    <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:800;color:var(--text-primary);margin-bottom:8px" id="redirect-title"></div>
+    <div style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:18px;max-width:420px;margin-left:auto;margin-right:auto" id="redirect-body"></div>
+    <div class="alt-grid" id="alt-options"></div>
+    <button class="btn-restart" onclick="restartForm()">↺ Restart form</button>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="confirm-screen" id="confirm-screen">
+    <div style="font-size:44px;margin-bottom:12px">✅</div>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--text-primary);margin-bottom:6px">Your request is in</div>
+    <div style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">We'll review it and get back to you soon. Here's your reference number.</div>
+    <div class="confirm-ref" id="confirm-ref">SLH-XXX</div>
+    <div class="confirm-details" id="confirm-details"></div>
+    <a href="staff-hub.html" class="btn-home">← Back to Staff Hub</a>
   </div>
 </div>
+
 <footer class="footer">
   <span>Synaptic Learning Hub · Training Requests · 2026</span>
   <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
 </footer>
+
 <script>
-const radios={};
-function selectRadio(el,group,val){
-  document.querySelectorAll('#'+group+'Group .radio-opt').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected'); radios[group]=val;
+var formData={};
+function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function getRadio(name){var r=document.querySelector('input[name="'+name+'"]:checked');return r?r.value:null;}
+function goTo(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  var linear=['sec-1','sec-2','sec-3','sec-4','sec-5','sec-6'];
+  var li=linear.indexOf(id);
+  if(li<0)li=0;
+  for(var i=1;i<=6;i++){
+    var ps=document.getElementById('prog-'+i);
+    var pl=document.getElementById('pline-'+i);
+    if(!ps)continue;
+    ps.classList.remove('active','done');
+    if(i<li+1){ps.classList.add('done');}
+    else if(i===li+1){ps.classList.add('active');}
+    if(pl){pl.classList.toggle('done',i<=li);}
+  }
+  window.scrollTo(0,0);
+}
+function showRedirect(icon,title,body,alts){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('progress-bar').style.display='none';
+  document.getElementById('redirect-icon').textContent=icon;
+  document.getElementById('redirect-title').textContent=title;
+  document.getElementById('redirect-body').textContent=body;
+  document.getElementById('alt-options').innerHTML=alts.map(function(a){return'<div class="alt-card"><div class="alt-icon">'+a.icon+'</div><div class="alt-title">'+a.title+'</div><div class="alt-desc">'+a.desc+'</div></div>';}).join('');
+  document.getElementById('redirect-screen').classList.add('show');
+  window.scrollTo(0,0);
+}
+function restartForm(){
+  document.getElementById('redirect-screen').classList.remove('show');
+  document.getElementById('progress-bar').style.display='flex';
+  document.querySelectorAll('input[type=radio]').forEach(function(r){r.checked=false;});
+  document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('selected');});
+  goTo('sec-1');
+}
+function nextFromS1(){
+  var name=getVal('f-name'),team=getVal('f-team'),role=getVal('f-role'),sponsor=getVal('f-sponsor');
+  if(!name||!team||!role||!sponsor){alert('Please fill in all required fields.');return;}
+  var sit=getRadio('situation');
+  if(!sit){alert('Please select what best describes your situation.');return;}
+  formData.name=name;formData.team=team;formData.role=role;formData.sponsor=sponsor;formData.situation=sit;
+  if(sit==='reference'){showRedirect('📄','This sounds like a documentation challenge','The most effective solution here is a job aid, reference guide, or updated policy — not a course. We can help you design the right format.',[{icon:'📋',title:'Job aid',desc:'A quick reference card people can use in the moment'},{icon:'📝',title:'Policy or process doc',desc:'A structured document owned by your team'},{icon:'💬',title:'Talk it through',desc:'A 30-min call with L&D to map the right format'}]);return;}
+  if(sit==='unsure'){showRedirect('🧭','Let us figure this out together','Sometimes the need is clearest in conversation. Submit this form and we will reach out to schedule a short discovery call.',[{icon:'📅',title:'Discovery call',desc:'30 min with L&D to map your need and find the right solution'},{icon:'💬',title:'Slack L&D directly',desc:'Drop us a message and we will respond within 2 business days'}]);return;}
+  if(sit==='notapplying'){goTo('sec-1b');return;}
+  goTo('sec-2');
+}
+function nextFromS1b(){
+  var gap=getRadio('gap');
+  if(!gap){alert('Please select what you think is behind the gap.');return;}
+  formData.gap=gap;
+  if(gap==='enforcement'||gap==='nodoc'){showRedirect('🔍','Training alone rarely solves this','When people know something but are not doing it, the root cause is almost never a training gap. The most effective interventions here are a manager cascade, a process clarification, or a team session with clear accountability.',[{icon:'👥',title:'Manager cascade',desc:'A structured conversation led by the manager to align on expectations'},{icon:'🔄',title:'Process clarification',desc:'A team session to agree on the right way to do something'},{icon:'📊',title:'Accountability system',desc:'Clear metrics or checkpoints that make the behaviour visible'}]);return;}
+  goTo('sec-2');
+}
+function nextFromS2(){
+  var ltype=getRadio('ltype');
+  if(!ltype){alert('Please select the type of learning need.');return;}
+  formData.ltype=ltype;
+  if(ltype==='mandatory'){goTo('sec-2b');return;}
+  goTo('sec-3');
+}
+function nextFromS2b(){
+  var reg=getRadio('regulator'),audit=getRadio('auditorigin');
+  if(!reg||!audit){alert('Please answer both questions.');return;}
+  formData.regulator=reg;formData.auditorigin=audit;
+  if(reg==='none'&&(audit==='preventive'||audit==='unsure')){showRedirect('📚','This may not meet the criteria for mandatory training','Mandatory all-staff training at Synaptic is reserved for topics required by regulators or internal audit. Based on your answers, there is likely a faster and more targeted solution available.',[{icon:'🎯',title:'Targeted e-learning',desc:'A focused course for a specific audience'},{icon:'👥',title:'Manager briefing',desc:'A structured cascade through people managers'},{icon:'📋',title:'Communication campaign',desc:'A Slack or email campaign to reinforce awareness'}]);return;}
+  goTo('sec-3');
+}
+function nextFromS3(){
+  var audience=getVal('f-audience'),headcount=getVal('f-headcount');
+  if(!audience||!headcount){alert('Please fill in the required fields.');return;}
+  formData.audience=audience;formData.headcount=headcount;formData.familiarity=getVal('f-familiarity');
+  goTo('sec-4');
+}
+function nextFromS4(){
+  var problem=getVal('f-problem'),outcome=getVal('f-outcome');
+  if(!problem||!outcome){alert('Please fill in the required fields.');return;}
+  formData.problem=problem;formData.outcome=outcome;formData.measure=getVal('f-measure');
+  goTo('sec-5');
+}
+function nextFromS5(){
+  var urgency=getVal('f-urgency'),materials=getVal('f-materials'),owner=getVal('f-owner');
+  if(!urgency||!materials||!owner){alert('Please fill in the required fields.');return;}
+  formData.urgency=urgency;formData.materials=materials;formData.owner=owner;
+  formData.date=getVal('f-date');formData.budget=getVal('f-budget');
+  goTo('sec-6');
 }
 function submitForm(){
-  const name=document.getElementById('fname').value.trim();
-  const need=document.getElementById('fneed').value.trim();
-  if(!name||!need){alert('Please fill in your name and describe the learning need.');return;}
-  const ref='SLH-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*900)+100);
-  document.getElementById('refNum').textContent='Reference: '+ref;
-  document.getElementById('formView').style.display='none';
-  document.getElementById('successView').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
+  var followup=getRadio('followup');
+  if(!followup){alert('Please select how you would like us to follow up.');return;}
+  formData.followup=followup;formData.notes=getVal('f-notes');
+  var ref='SLH-'+String(Math.floor(Math.random()*900)+100);
+  formData.ref=ref;
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('progress-bar').style.display='none';
+  document.getElementById('confirm-screen').classList.add('show');
+  document.getElementById('confirm-ref').textContent='Reference: '+ref;
+  var urgencyLabel={'regulatory':'Regulatory / audit deadline','business':'Business deadline','flexible':'Flexible','unsure':'Not sure'}[formData.urgency]||formData.urgency;
+  var typeLabel={'mandatory':'Mandatory training','technical':'Technical / role skill','soft':'Soft skills','selfservice':'Self-service resource'}[formData.ltype]||formData.ltype;
+  var followupLabel={'async':'Async response','call':'Discovery call','urgent':'Urgent — 24h response'}[formData.followup]||formData.followup;
+  document.getElementById('confirm-details').innerHTML='<div class="cdr"><span class="cdr-label">From</span><span class="cdr-val">'+formData.name+' · '+formData.team+'</span></div><div class="cdr"><span class="cdr-label">Type</span><span class="cdr-val">'+typeLabel+'</span></div><div class="cdr"><span class="cdr-label">Audience</span><span class="cdr-val">'+formData.audience+' ('+formData.headcount+' people)</span></div><div class="cdr"><span class="cdr-label">Urgency</span><span class="cdr-val">'+urgencyLabel+'</span></div><div class="cdr"><span class="cdr-label">Follow-up</span><span class="cdr-val">'+followupLabel+'</span></div>';
+  window.scrollTo(0,0);
 }
+document.querySelectorAll('.opt').forEach(function(opt){
+  opt.addEventListener('click',function(){
+    var name=this.querySelector('input[type=radio]').name;
+    document.querySelectorAll('input[name="'+name+'"]').forEach(function(r){r.closest('.opt').classList.remove('selected');});
+    this.classList.add('selected');
+  });
+});
 </script>
 </body>
 </html>

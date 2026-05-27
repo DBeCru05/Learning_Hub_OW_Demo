@@ -721,25 +721,42 @@ function buildFallback(){
       subtitle: 'A personalized path for your goal: "' + g + '"',
       modules: [
         {
-          title: 'Why Communication Breaks Down',
-          type: 'lesson',
-          eyebrow: 'Module 1 · Lesson',
-          description: 'Understanding the root causes of miscommunication at work',
+          title: 'Level 1: Communication Challenges',
+          type: 'gamified',
+          eyebrow: 'Module 1 · Gamified',
+          description: 'Earn XP answering real-work communication challenges. Find the right answer to advance.',
           content: {
-            intro: 'Most communication problems aren't about the words — they're about the gap between what you intend and what the other person hears. That gap is shaped by context, assumptions, emotional state, and the invisible filters we all carry.
-
-The research is clear: in professional settings, up to 70% of miscommunication happens not because of what was said, but because of what was assumed. The sender thinks they were clear. The receiver thought they understood. Both are wrong.
-
-Effective communication is a skill, not a personality trait. It can be learned, practiced, and improved — regardless of how naturally "good with words" you feel.',
-            concepts: [
-              { label: 'The Intention Gap', text: 'What you mean to say and what lands are two different things. High-context cultures read between the lines; low-context cultures expect everything explicit. Most conflict lives in this gap.' },
-              { label: 'Filters we all carry', text: 'Every message passes through the receiver's history, mood, assumptions, and relationship with you. You can't control their filters — but you can account for them.' },
-              { label: 'The medium matters', text: 'Slack is not the right place for feedback. Email is not the right place for conflict. Choosing the right channel is half the communication decision.' },
-              { label: 'Clarity is an act of respect', text: 'Vague communication forces the other person to fill in the blanks — usually with worst-case assumptions. Being specific is a form of care.' }
+            challenges: [
+              {
+                xp: 50,
+                prompt: 'Your colleague sends "Can we sync?" with no context. What do you reply?',
+                options: [
+                  { text: 'Sure! When works?', correct: false, feedback: 'Better than nothing — but you missed a chance to get context first. Try again.' },
+                  { text: 'Sure — what is it about and when works for you?', correct: true, feedback: 'Yes! Gets context AND schedules in one message. +50 XP.' },
+                  { text: 'Just call me.', correct: false, feedback: 'Puts all the work on them. Try again.' }
+                ]
+              },
+              {
+                xp: 75,
+                prompt: 'Your manager gives feedback in a group call. You feel blindsided. Best response in the moment?',
+                options: [
+                  { text: 'Defend yourself immediately.', correct: false, feedback: 'Defensiveness in the moment almost always makes it worse. Try again.' },
+                  { text: 'Say nothing. Process it later.', correct: false, feedback: 'Silence can signal disengagement. There is a better move. Try again.' },
+                  { text: 'Say "Thanks — I would love to follow up on this 1:1."', correct: true, feedback: 'Perfect. Acknowledges without escalating. Creates space for a real conversation. +75 XP.' }
+                ]
+              },
+              {
+                xp: 100,
+                prompt: 'You send: "Please confirm this will be ready by Friday." Reply: "Ok." Friday comes — it is not what you expected. Root cause?',
+                options: [
+                  { text: 'They lack ownership.', correct: false, feedback: 'That is a judgment, not a diagnosis. The communication failed first. Try again.' },
+                  { text: '"Ok" does not mean "I understood exactly what you need." Your message was ambiguous.', correct: true, feedback: 'Exactly. Specific confirmation plus clear spec equals no gap. "Ok" equals false alignment. +100 XP.' },
+                  { text: 'Friday deadlines are unrealistic.', correct: false, feedback: 'Not the issue here. The gap is in the message. Try again.' }
+                ]
+              }
             ]
           }
         },
-        {
           title: 'Knowledge Check',
           type: 'quiz',
           eyebrow: 'Module 2 · Knowledge Check',
@@ -856,6 +873,7 @@ function renderModule(idx){
   const main=document.getElementById('academyMain');
   let html=`<div class="mod-header"><div class="mod-eyebrow">${mod.eyebrow}</div><div class="mod-title">${mod.title}</div><div class="mod-desc">${mod.description}</div></div>`;
   if(mod.type==='lesson') html+=renderLesson(mod.content);
+  else if(mod.type==='gamified') html+=renderGamified(mod.content,idx);
   else if(mod.type==='quiz') html+=renderQuiz(mod.content,idx);
   else if(mod.type==='scenario') html+=renderScenario(mod.content,idx);
   const isLast=idx===academy.modules.length-1;
@@ -869,6 +887,100 @@ function renderModule(idx){
   if(intake.commit==='long') saveProgress();
   } catch(err) {
     document.getElementById('academyMain').innerHTML = '<div style="padding:32px;color:#6B9AB8;font-size:13px;line-height:1.8"><strong style="color:#F5F0E8;display:block;margin-bottom:8px">Loading module...</strong>Error: '+err.message+'<br><br><button onclick="renderModule('+0+')" style="background:#003153;color:#F5F0E8;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:DM Sans,sans-serif;font-weight:700">Reload module</button></div>';
+  }
+}
+
+// Gamified challenge store
+const _gc = {};
+
+function renderGamified(c, idx) {
+  _gc['challenges_'+idx] = c.challenges;
+  _gc['current_'+idx] = 0;
+  _gc['earned_'+idx] = 0;
+  return renderChallenge(idx);
+}
+
+function renderChallenge(modIdx) {
+  const challenges = _gc['challenges_'+modIdx];
+  const ci = _gc['current_'+modIdx] || 0;
+  const earned = _gc['earned_'+modIdx] || 0;
+  const total = challenges.length;
+
+  if (ci >= total) {
+    // All challenges done
+    enableNext();
+    return '<div class="lesson-content" style="text-align:center;padding:40px 28px">' +
+      '<div style="font-size:48px;margin-bottom:16px">🏆</div>' +
+      '<div style="font-family:Playfair Display,serif;font-size:22px;font-weight:800;color:var(--cream);margin-bottom:8px">Level Complete!</div>' +
+      '<div style="font-size:13px;color:rgba(245,240,232,0.5);margin-bottom:16px">You earned <strong style="color:var(--teal)">' + earned + ' XP</strong> from ' + total + ' challenges.</div>' +
+      '<div style="font-size:12px;color:rgba(245,240,232,0.35)">Click "Next module" to continue.</div></div>';
+  }
+
+  const ch = challenges[ci];
+  const progress = Math.round((ci / total) * 100);
+  const keys = ['A', 'B', 'C'];
+
+  let optsHtml = '';
+  ch.options.forEach(function(opt, i) {
+    _gc['go_'+modIdx+'_'+ci+'_'+i] = opt;
+    optsHtml += '<button class="quiz-opt" onclick="handleGameChallenge('+modIdx+','+ci+','+i+')">' +
+      '<span class="quiz-key">'+keys[i]+'</span>'+opt.text+'</button>';
+  });
+
+  return '<div class="lesson-content">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+    '<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)">Challenge '+(ci+1)+' of '+total+'</div>' +
+    '<div style="font-size:10px;font-weight:700;color:var(--teal)">+'+ch.xp+' XP available</div></div>' +
+    '<div style="height:4px;background:rgba(255,255,255,0.07);border-radius:2px;margin-bottom:20px;overflow:hidden">' +
+    '<div style="width:'+progress+'%;height:100%;background:var(--teal);border-radius:2px;transition:width .4s"></div></div>' +
+    '<div class="quiz-q" style="font-size:15px;margin-bottom:20px">'+ch.prompt+'</div>' +
+    '<div class="quiz-opts" id="gcOpts_'+modIdx+'_'+ci+'">'+optsHtml+'</div>' +
+    '<div class="quiz-feedback" id="gcFeedback_'+modIdx+'_'+ci+'"></div>' +
+    '</div>';
+}
+
+function handleGameChallenge(modIdx, ci, optIdx) {
+  const opt = _gc['go_'+modIdx+'_'+ci+'_'+optIdx];
+  const optsEl = document.getElementById('gcOpts_'+modIdx+'_'+ci);
+  const fbEl = document.getElementById('gcFeedback_'+modIdx+'_'+ci);
+
+  if (!opt || !optsEl) return;
+
+  const btn = optsEl.querySelectorAll('.quiz-opt')[optIdx];
+
+  if (opt.correct) {
+    // Lock all, show correct, advance
+    optsEl.querySelectorAll('.quiz-opt').forEach(function(b){ b.disabled=true; b.onclick=null; });
+    btn.classList.add('correct');
+    fbEl.textContent = opt.feedback;
+    fbEl.className = 'quiz-feedback show correct';
+
+    const xpEarned = _gc['challenges_'+modIdx][ci].xp;
+    _gc['earned_'+modIdx] = (_gc['earned_'+modIdx]||0) + xpEarned;
+    addXP(xpEarned);
+
+    // Advance to next challenge after delay
+    _gc['current_'+modIdx] = ci + 1;
+    setTimeout(function() {
+      const main = document.getElementById('academyMain');
+      const mod = academy.modules[currentMod];
+      let html = '<div class="mod-header"><div class="mod-eyebrow">'+mod.eyebrow+'</div><div class="mod-title">'+mod.title+'</div><div class="mod-desc">'+mod.description+'</div></div>';
+      html += renderChallenge(modIdx);
+      const isLast = currentMod === academy.modules.length-1;
+      const prevBtn = currentMod>0 ? '<button class="mod-nav-btn btn-prev" onclick="renderModule('+(currentMod-1)+')">← Previous</button>' : '<span></span>';
+      const nextClick = isLast ? 'finishAcademy()' : 'advanceMod('+currentMod+')';
+      const nextLabel = isLast ? '🎓 Complete path' : 'Next module →';
+      const nextDisabled = (_gc['current_'+modIdx] < _gc['challenges_'+modIdx].length) ? 'disabled' : '';
+      html += '<div class="mod-nav">'+prevBtn+'<button class="mod-nav-btn btn-next" id="modNextBtn" onclick="'+nextClick+'" '+nextDisabled+'>'+nextLabel+'</button></div>';
+      main.innerHTML = html;
+    }, 1200);
+  } else {
+    // Mark wrong but keep others active
+    btn.classList.add('wrong');
+    btn.disabled = true;
+    btn.onclick = null;
+    fbEl.textContent = opt.feedback;
+    fbEl.className = 'quiz-feedback show wrong';
   }
 }
 
