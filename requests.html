@@ -52,11 +52,12 @@ a{text-decoration:none;color:inherit}
 
 /* OPTIONS */
 .options{display:flex;flex-direction:column;gap:7px}
-.opt{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s}
+.opt{display:flex;align-items:center;gap:14px;padding:13px 16px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;text-align:left}
 .opt:hover{border-color:rgba(107,154,184,0.4);background:var(--steel-light)}
 .opt.selected{border-color:var(--navy);background:rgba(0,49,83,0.04)}
-.opt input[type=radio]{margin-top:2px;accent-color:var(--navy);flex-shrink:0}
-.opt-label{font-size:13px;font-weight:700;color:var(--text-primary);display:block;margin-bottom:1px}
+.opt input[type=radio]{width:18px;height:18px;accent-color:var(--navy);flex-shrink:0;cursor:pointer;margin:0}
+.opt-text{display:flex;flex-direction:column;gap:2px}
+.opt-label{font-size:13px;font-weight:700;color:var(--text-primary);display:block}
 .opt-sub{font-size:11px;color:var(--text-muted)}
 
 /* INLINE MESSAGES */
@@ -117,7 +118,56 @@ a{text-decoration:none;color:inherit}
   <p class="hero-sub">Have a learning need for your team? Tell us about it. We'll review your request and follow up within 2 business days — urgent regulatory requests within 24 hours.</p>
 </div>
 
-<div class="form-wrap">
+<div id="landing-view" style="max-width:660px;margin:0 auto;padding:32px 24px 60px">
+  <div style="background:var(--card);border-radius:var(--r-lg);border:1.5px solid rgba(107,154,184,0.3);padding:24px 28px;margin-bottom:24px">
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div style="font-size:24px;flex-shrink:0;margin-top:2px">🤝</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:var(--text-primary);margin-bottom:14px">Before you submit</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-secondary);line-height:1.6">
+            <span style="color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px">✓</span>
+            <span>We will help you find the right solution — not just build a course. Sometimes a conversation, a resource, or a team session works better.</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-secondary);line-height:1.6">
+            <span style="color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px">✓</span>
+            <span>Mandatory all-staff training is reserved for topics required by regulators or internal audit. Everything else has a better alternative.</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-secondary);line-height:1.6">
+            <span style="color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px">✓</span>
+            <span>The form takes about 5 minutes. The more context you give us, the better and faster we can help.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="openForm()" style="display:block;width:100%;background:var(--navy);color:var(--cream);border:none;padding:15px;border-radius:var(--r);font-size:14px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;transition:background .2s">Open training request form →</button>
+  <div style="text-align:center;font-size:11px;color:var(--text-muted);margin-bottom:32px">Responses within 2 business days — urgent regulatory requests within 24 hours.</div>
+
+  <div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:10px">How it works<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+
+  <div style="background:var(--card);border-radius:var(--r-lg);border:1.5px solid var(--border);overflow:hidden">
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--navy);flex-shrink:0;margin-top:1px">1</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px">You submit the form</div><div style="font-size:11.5px;color:var(--text-muted)">Tell us the situation, the audience, and what you are hoping to achieve</div></div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--navy);flex-shrink:0;margin-top:1px">2</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px">L&D reviews within 2 days</div><div style="font-size:11.5px;color:var(--text-muted)">We assess the root cause and the best type of solution</div></div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--navy);flex-shrink:0;margin-top:1px">3</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px">We follow up with a recommendation</div><div style="font-size:11.5px;color:var(--text-muted)">We build it, point you to it, or help you build it yourself</div></div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px">
+      <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--navy);flex-shrink:0;margin-top:1px">4</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px">We close the loop</div><div style="font-size:11.5px;color:var(--text-muted)">Every request gets a response — even if the answer is a redirect</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="form-wrap" id="form-wrap" style="display:none">
   <div class="progress-bar" id="progress-bar">
     <div class="prog-step active" id="prog-1"><div class="prog-dot">1</div><span>Situation</span></div>
     <div class="prog-line" id="pline-1"></div>
@@ -292,12 +342,18 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+</div><!-- end form-wrap -->
 <footer class="footer">
   <span>Synaptic Learning Hub · Training Requests · 2026</span>
   <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
 </footer>
 
 <script>
+function openForm() {
+  document.getElementById('landing-view').style.display = 'none';
+  document.getElementById('form-wrap').style.display = 'block';
+  window.scrollTo(0,0);
+}
 var formData={};
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 function getRadio(name){var r=document.querySelector('input[name="'+name+'"]:checked');return r?r.value:null;}
