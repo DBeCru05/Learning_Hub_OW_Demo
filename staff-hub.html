@@ -164,6 +164,31 @@ a { text-decoration: none; color: inherit; }
 .footer { background: var(--navy); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
 .footer span { font-size: 10.5px; color: rgba(245,240,232,0.25); }
 .footer strong { color: rgba(107,154,184,0.6); }
+
+.team-section{padding:52px 40px 64px;max-width:1000px;margin:0 auto;width:100%;text-align:center}
+.team-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:12px}
+.team-eyebrow::before,.team-eyebrow::after{content:'';width:32px;height:1px;background:var(--steel);opacity:.4}
+.team-title{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,30px);font-weight:800;color:var(--text-primary);margin-bottom:8px;letter-spacing:-.01em}
+.team-sub{font-size:13px;color:var(--text-muted);margin-bottom:36px;line-height:1.65}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:640px){.team-grid{grid-template-columns:1fr}}
+.team-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:28px 20px 22px;transition:all .25s;box-shadow:var(--shadow-sm)}
+.team-card:hover{border-color:var(--steel);box-shadow:var(--shadow-hover);transform:translateY(-3px)}
+.team-av{width:72px;height:72px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;border:2px solid var(--border)}
+.team-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:800;color:var(--text-primary);margin-bottom:4px}
+.team-role{font-size:10.5px;font-weight:700;color:var(--steel);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px;line-height:1.5}
+.team-actions{display:flex;gap:8px;justify-content:center}
+.team-btn{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--border);color:var(--text-muted);background:var(--steel-light);text-decoration:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.team-btn:hover{border-color:var(--steel);color:var(--navy)}
+
+
+/* NAV BAR */
+.hub-nav{background:rgba(0,49,83,0.5);backdrop-filter:blur(10px);border-bottom:1px solid rgba(107,154,184,0.15);padding:0 32px;display:flex;align-items:center;gap:2px;height:42px;overflow-x:auto;position:sticky;top:58px;z-index:99}
+.hub-nav::-webkit-scrollbar{display:none}
+.hn-item{font-size:11px;font-weight:600;color:rgba(245,240,232,0.45);padding:0 12px;height:42px;display:flex;align-items:center;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;letter-spacing:.02em}
+.hn-item:hover{color:var(--cream);border-bottom-color:rgba(107,154,184,0.4)}
+.hn-item.active{color:var(--cream);border-bottom-color:var(--steel)}
+.hn-sep{width:1px;height:14px;background:rgba(107,154,184,0.15);margin:0 2px;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -188,6 +213,22 @@ a { text-decoration: none; color: inherit; }
     <span class="hub-badge">Staff Hub</span>
     <a class="back-link" href="index.html">← Switch role</a>
   </div>
+</nav>
+
+<nav class="hub-nav">
+  <a class="hn-item active" href="staff-hub.html">Home</a>
+  <div class="hn-sep"></div>
+  <a class="hn-item" href="live-training.html">Live Training</a>
+  <a class="hn-item" href="pathbuilder.html">Learning Builder</a>
+  <a class="hn-item" href="compass.html">Career Coach</a>
+  <a class="hn-item" href="synaptic-talks.html">Synaptic Talks</a>
+  <a class="hn-item" href="teaming.html">Teaming</a>
+  <a class="hn-item" href="grow.html">Career &amp; Feedback</a>
+  <div class="hn-sep"></div>
+  <a class="hn-item" href="requests.html">Training Requests</a>
+  <a class="hn-item" href="metrics.html">L&amp;D Metrics</a>
+  <div class="hn-sep"></div>
+  <a class="hn-item" href="index.html">← Switch Role</a>
 </nav>
 
 <div class="hero">
@@ -347,7 +388,7 @@ a { text-decoration: none; color: inherit; }
             <div class="session-meta">
               Understand Mexico's working culture through its socioeconomic history, political landscape, and deeply held values — how Mexicans approach work, relationships, and what truly matters.<br><br>
               <strong>🌎 LATAM & USA · English</strong> · June 3 · 10:00 AM ET<br>
-              Facilitator: <strong>Dani Bedolla</strong><br><br>
+              Facilitator: <strong>Daniela Bedolla</strong><br><br>
               <strong>🌏 Shanghai · English</strong> · June 3 · 10:00 AM CST<br>
               Facilitator: <strong>Meilin Lin</strong>
             </div>
@@ -362,7 +403,7 @@ a { text-decoration: none; color: inherit; }
               <strong>🌎 LATAM & USA · English</strong> · June 10 · 10:00 AM Mexico City<br>
               Facilitator: <strong>Meilin Lin</strong><br><br>
               <strong>🌎 LATAM & USA · Español</strong> · June 12 · 10:00 AM Mexico City<br>
-              Facilitator: <strong>Dani Bedolla</strong>
+              Facilitator: <strong>Daniela Bedolla</strong>
             </div>
             <div class="session-cta">Join now →</div>
           </div>
@@ -405,8 +446,45 @@ a { text-decoration: none; color: inherit; }
 
 <footer class="footer">
   <span>Synaptic Learning Hub · Staff Hub · 2026</span>
-  <span>Designed & built by <strong>Dani Bedolla Studio</strong></span>
+  <span>Designed & built by <strong>Daniela Bedolla Studio</strong></span>
 </footer>
+
+
+  <div style="width:calc(100% - 80px);height:1px;background:var(--border);margin:0 auto"></div>
+  <div class="team-section">
+    <div class="team-eyebrow">Behind the platform</div>
+    <div class="team-title">Your Learning &amp; Development Team</div>
+    <p class="team-sub">Questions about a program, a learning need, or just want to connect?</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,rgba(196,30,58,0.08),rgba(107,154,184,0.12))">&#x1F9E0;</div>
+        <div class="team-name">Daniela Bedolla</div>
+        <div class="team-role">People Experience<br>Manager</div>
+        <div class="team-actions">
+          <a class="team-btn" href="mailto:daniela.bedolla@synaptic.com">&#x2709; Email</a>
+          <a class="team-btn" href="#">&#x1F4AC; Slack</a>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,rgba(107,154,184,0.1),rgba(0,49,83,0.08))">&#x1F469;&#x200D;&#x1F3EB;</div>
+        <div class="team-name">Valeria Argueta</div>
+        <div class="team-role">People Experience<br>Lead</div>
+        <div class="team-actions">
+          <a class="team-btn" href="mailto:valeria.argueta@synaptic.com">&#x2709; Email</a>
+          <a class="team-btn" href="#">&#x1F4AC; Slack</a>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,rgba(0,49,83,0.08),rgba(107,154,184,0.1))">&#x1F468;&#x200D;&#x1F4BB;</div>
+        <div class="team-name">Andres Garrido</div>
+        <div class="team-role">Learning &amp; Development<br>Sr Analyst</div>
+        <div class="team-actions">
+          <a class="team-btn" href="mailto:andres.garrido@synaptic.com">&#x2709; Email</a>
+          <a class="team-btn" href="#">&#x1F4AC; Slack</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
