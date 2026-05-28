@@ -726,7 +726,7 @@ function buildFallback(){
           title: 'Level 1: Communication Challenges',
           type: 'gamified',
           eyebrow: 'Module 1 · Gamified',
-          description: 'Earn XP answering real-work communication challenges. Find the right answer to advance.',
+          description: 'Earn XP answering real-work challenges. Find the right answer to advance.',
           content: {
             challenges: [
               {
@@ -734,8 +734,8 @@ function buildFallback(){
                 prompt: 'Your colleague sends "Can we sync?" with no context. What do you reply?',
                 options: [
                   { text: 'Sure! When works?', correct: false, feedback: 'Better than nothing — but you missed a chance to get context first. Try again.' },
-                  { text: 'Sure — what is it about and when works for you?', correct: true, feedback: 'Yes! Gets context AND schedules in one message. +50 XP.' },
-                  { text: 'Just call me.', correct: false, feedback: 'Puts all the work on them. Try again.' }
+                  { text: 'Sure — what is it about and when works for you?', correct: true, feedback: 'Yes! Gets context AND schedules in one message. Efficient and clear. +50 XP.' },
+                  { text: 'Just call me.', correct: false, feedback: 'This puts all the work on them. Try again.' }
                 ]
               },
               {
@@ -744,7 +744,7 @@ function buildFallback(){
                 options: [
                   { text: 'Defend yourself immediately.', correct: false, feedback: 'Defensiveness in the moment almost always makes it worse. Try again.' },
                   { text: 'Say nothing. Process it later.', correct: false, feedback: 'Silence can signal disengagement. There is a better move. Try again.' },
-                  { text: 'Say "Thanks — I would love to follow up on this 1:1."', correct: true, feedback: 'Perfect. Acknowledges without escalating. Creates space for a real conversation. +75 XP.' }
+                  { text: 'Say: Thanks — I would love to follow up on this 1:1.', correct: true, feedback: 'Perfect. Acknowledges without escalating. Creates space for a real conversation. +75 XP.' }
                 ]
               },
               {
@@ -759,6 +759,7 @@ function buildFallback(){
             ]
           }
         },
+        {
           title: 'Knowledge Check',
           type: 'quiz',
           eyebrow: 'Module 2 · Knowledge Check',
@@ -767,12 +768,12 @@ function buildFallback(){
             question: 'A colleague sends you a Slack message: "Can we talk?" with no context. What is the most effective response?',
             options: [
               { text: 'Immediately assume something is wrong and start worrying', correct: false },
-              { text: 'Reply with "Sure — what's it about and when works for you?" to get context before committing', correct: true },
-              { text: 'Say yes without asking for context so you don't seem difficult', correct: false },
+              { text: 'Reply asking what it is about and when works for them', correct: true },
+              { text: 'Say yes without asking for context so you do not seem difficult', correct: false },
               { text: 'Ignore it until they follow up with more detail', correct: false }
             ],
-            feedbackCorrect: 'Exactly right. Asking for context isn't defensive — it's efficient. It lets you show up prepared and prevents the other person from sitting with unnecessary anxiety about your reaction.',
-            feedbackWrong: 'The goal is to reduce uncertainty for both people. Asking "what's it about?" before agreeing to a meeting is a mark of good communication, not avoidance.'
+            feedbackCorrect: 'Exactly right. Asking for context is not defensive — it is efficient. It lets you show up prepared and prevents the other person from sitting with unnecessary anxiety about your reaction.',
+            feedbackWrong: 'The goal is to reduce uncertainty for both people. Asking what it is about before agreeing to a meeting is a mark of good communication, not avoidance.'
           }
         },
         {
@@ -781,12 +782,12 @@ function buildFallback(){
           eyebrow: 'Module 3 · Scenario',
           description: 'Apply your thinking to a realistic workplace situation',
           content: {
-            scene: 'You've just finished presenting a proposal to your team. Your manager says "interesting approach" and moves on without further comment. Three days later you find out they've decided to go in a different direction — without telling you.',
+            scene: 'You just finished presenting a proposal to your team. Your manager says "interesting approach" and moves on without further comment. Three days later you find out they decided to go in a different direction — without telling you.',
             question: 'What was the communication failure, and what would you do differently next time?',
             options: [
-              { text: 'Your manager was unclear — there's nothing you could have done differently', correct: false, feedback: 'While your manager could have been clearer, effective communicators don't wait for clarity — they create it. "Interesting approach" is a signal worth following up on.' },
-              { text: 'After the meeting, you could have asked directly: "How are you feeling about the direction? Any concerns I should think through?" — creating space for honest feedback', correct: true, feedback: 'This is exactly right. Closing the loop after a presentation is a communication habit that prevents exactly this scenario. One direct question would have surfaced the concern.' },
-              { text: 'Send a follow-up email summarizing the proposal and asking for written approval', correct: false, feedback: 'Documentation is useful but this doesn't address the real issue — the lack of a genuine feedback conversation after the presentation.' }
+              { text: 'Your manager was unclear — there is nothing you could have done differently', correct: false, feedback: 'While your manager could have been clearer, effective communicators do not wait for clarity — they create it. "Interesting approach" is a signal worth following up on.' },
+              { text: 'After the meeting, ask directly: "How are you feeling about the direction? Any concerns I should think through?"', correct: true, feedback: 'This is exactly right. Closing the loop after a presentation is a communication habit that prevents exactly this scenario. One direct question would have surfaced the concern.' },
+              { text: 'Send a follow-up email summarizing the proposal and asking for written approval', correct: false, feedback: 'Documentation is useful but this does not address the real issue — the lack of a genuine feedback conversation after the presentation.' }
             ]
           }
         }

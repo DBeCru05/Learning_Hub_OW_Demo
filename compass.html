@@ -347,19 +347,17 @@ function closeMisuseModal() {
 function simulateReply(userText) {
   const lower = userText.toLowerCase();
 
-  // ── DEMO CONVERSATION FLOW ──
-  // Turn 1: feedback to manager
+  // Demo flow
   if (lower.includes('feedback') && (lower.includes('manager') || lower.includes('boss'))) {
     return "That's one of the most important — and most avoided — conversations at work. Before we think about the words, tell me: what's the specific behavior you want your manager to change? Not the feeling it creates, but the actual thing they do or don't do.";
   }
-  // Turn 2: follow-up about objectives / clarity
   if (lower.includes('objective') || lower.includes('goal') || lower.includes('clear') || lower.includes('clarity') || lower.includes('direction') || lower.includes('expectation')) {
     return "That's a really common pain point — and it's worth separating two things: does your manager not know what clear looks like, or do they know and just not communicate it to you? Those are different problems with different solutions. Which one feels closer to your situation?";
   }
-  // Turn 3: follow-up on unclear goals
-  if (lower.includes('both') || lower.includes('not sure') || lower.includes('don't know') || lower.includes('unsure') || lower.includes('hard to tell')) {
+  if (lower.includes('both') || lower.includes('not sure') || lower.includes('unsure') || lower.includes('hard to tell') || lower.includes("don") && lower.includes("know")) {
     return "Then the most useful thing you can do before that conversation is bring a concrete example — a moment when you needed clarity and didn't get it, and what it cost you. That makes it specific and actionable instead of a general complaint. Does a specific moment come to mind?";
   }
+
   // Emotions
   if (lower.includes('confused') || lower.includes('confus')) {
     return "Confusion is usually a signal that something doesn't have enough context yet. What's the part you're most unclear about — the situation itself, or what you should do next?";
@@ -373,8 +371,9 @@ function simulateReply(userText) {
   if (lower.includes('tired') || lower.includes('exhaust') || lower.includes('burnout') || lower.includes('overwhelm')) {
     return "That kind of tiredness usually means something in the current setup isn't sustainable. Is it the volume of work, or more about what the work actually is?";
   }
+
   // Topics
-  if (lower.includes('manager') || lower.includes('boss') || lower.includes('1:1')) {
+  if (lower.includes('manager') || lower.includes('boss')) {
     return "It sounds like there's some tension there. Before we think about how to approach the conversation — what outcome would you actually want to walk away with from that talk?";
   }
   if (lower.includes('stuck') || lower.includes('bored') || lower.includes('plateau')) {
@@ -392,6 +391,7 @@ function simulateReply(userText) {
   if (lower.includes('recogni') || lower.includes('invisible') || lower.includes('credit')) {
     return "Feeling unseen is one of the more draining experiences at work. Is this about one specific person not seeing your contribution, or is it more systemic than that?";
   }
+
   const fallbacks = [
     "Tell me more about what's actually happening — I want to make sure I understand the situation before I ask anything.",
     "What's the part of this that feels most unresolved for you right now?",
@@ -401,7 +401,6 @@ function simulateReply(userText) {
   ];
   return fallbacks[userText.length % fallbacks.length];
 }
-
 function appendMsg(role, text) {
   const msgs = document.getElementById('messages');
   const msg = document.createElement('div');
