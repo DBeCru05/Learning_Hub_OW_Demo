@@ -111,9 +111,10 @@ a{text-decoration:none;color:inherit}
    INTAKE SCREEN
 ══════════════════════════ */
 #screen-intake{
-  align-items:center;justify-content:center;padding:48px 24px;
+  align-items:center;justify-content:flex-start;padding:48px 24px;
   background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(0,212,184,0.07) 0%,transparent 60%),
-             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(107,154,184,0.06) 0%,transparent 60%)
+             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(107,154,184,0.06) 0%,transparent 60%);
+  min-height:100vh;
 }
 .intake-shell{width:100%;max-width:620px}
 .intake-wordmark{font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:10px}
@@ -618,15 +619,16 @@ const SAVE_KEY='synaptic_path_save';
 
 // ══ RESUME CHECK ══
 function checkResume(){
-  const saved=localStorage.getItem(SAVE_KEY);
-  if(saved){
-    try{
+  try {
+    const saved=localStorage.getItem(SAVE_KEY);
+    if(saved){
       const s=JSON.parse(saved);
       document.getElementById('resumeBanner').style.display='flex';
       document.getElementById('resumeTitle').textContent=s.title||'Untitled Path';
-    }catch(e){}
-  }
+    }
+  } catch(e) {}
   showScreen('intake');
+  window.scrollTo(0,0);
 }
 
 function loadSavedPath(){
@@ -1071,7 +1073,7 @@ function addXP(n){
 function rateStar(n){document.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('active',i<n));}
 
 // ══ UTILS ══
-function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+name).classList.add('active');}
+function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById('screen-'+name);if(el)el.classList.add('active');window.scrollTo(0,0);}
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 function esc(s){return(s||'').replace(/'/g,"&#39;").replace(/"/g,"&quot;");}
 function restartBuilder(){
